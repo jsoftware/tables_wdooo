@@ -9,17 +9,19 @@ NB. file names use URL format eg. file:///C:/test.xls (always forward slash)
 NB. might not coerce 1 to VT_BOOL TRUE so need to specify VT_... as left argument
 NB. use array argument (discuss later)
 test=: 3 : 0
-f1=. 'file:///', '/' I.@('\'&=)@]} jpath 'Addons/tables/wdooo/test1.xls'
-p=: conew 'wdooo'
+loc=. 3 : '> (4!:4 <''y'') { 4!:3 $0'
+PATH=. getpath_j_ loc''
+f1=. 'file:///', '/' I.@('\'&=)@]} PATH, 'test1.xls'
+p=. '' conew 'wdooo'
 try.
-  'base temp'=: olecreate__p 'com.sun.star.ServiceManager'
+  'base temp'=. olecreate__p 'com.sun.star.ServiceManager'
   olemethod__p base ; 'createInstance' ; 'com.sun.star.frame.Desktop'
-  desktop=: oleid__p temp
+  desktop=. oleid__p temp
   (VT_BSTR, VT_BSTR, VT_I4, VT_UNKNOWN+VT_ARRAY) olemethod__p desktop ; 'loadComponentFromURL' ; f1 ; '_blank' ; 0 ; VT_UNKNOWN olevector__p ''
-  doc=: oleid__p temp
+  doc=. oleid__p temp
   olemethod__p doc ; 'getSheets'
   olemethod__p temp ; 'getByIndex' ; 0
-  sheet=: oleid__p temp
+  sheet=. oleid__p temp
   olemethod__p sheet ; 'getCellByPosition' ; 3 ; 9
   olemethod__p temp ; 'SetString' ; 'OOo Calc'
   olemethod__p sheet ; 'getCellByPosition' ; 4 ; 9
@@ -33,9 +35,9 @@ NB. clean up
   olerelease__p sheet
   olerelease__p doc
   olerelease__p desktop
-  1!:2&2 'success'
+  smoutout 'success'
 catch.
-  1!:2&2 oleqer__p ''
+  smoutput oleqer__p ''
 end.
 destroy__p ''
 )
