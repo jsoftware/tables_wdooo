@@ -1,4 +1,8 @@
-NB. example
+NB. example on openoffice calc
+NB. only works if openoffice has been installed
+
+'require'~'tables/wdooo'
+
 cocurrent 'base'
 
 NB. OpenOffice.org calc
@@ -9,9 +13,9 @@ NB. file names use URL format eg. file:///C:/test.xls (always forward slash)
 NB. might not coerce 1 to VT_BOOL TRUE so need to specify VT_... as left argument
 NB. use array argument (discuss later)
 test=: 3 : 0
-loc=. 3 : '> (4!:4 <''y'') { 4!:3 $0'
-PATH=. getpath_j_ loc''
-f1=. 'file:///', '/' I.@('\'&=)@]} PATH, 'test1.xls'
+PATH=. '/'&(('\' I.@:= ])}) jpath '~addons/tables/wdooo'
+f1=. 'file:///', PATH, '/test1.xls'
+smoutput f1
 p=. '' conew 'wdooo'
 try.
   'base temp'=. olecreate__p 'com.sun.star.ServiceManager'
@@ -35,7 +39,7 @@ NB. clean up
   olerelease__p sheet
   olerelease__p doc
   olerelease__p desktop
-  smoutout 'success'
+  smoutput 'success'
 catch.
   smoutput oleqer__p ''
 end.
