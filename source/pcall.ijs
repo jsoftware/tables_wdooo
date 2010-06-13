@@ -20,16 +20,17 @@ idef=: 4 : '((x&,)&.>y)=: i.#y'
 coclass 'olegpole32'
 coinsert 'olegpcall'
 
+CoInitializeEx=:     'ole32 CoInitializeEx   > x x i'&cd
 CLSIDFromProgID=: 'ole32 CLSIDFromProgID  > i *w *c'&cd
 CLSIDFromString=: 'ole32 CLSIDFromString  > i *w *c'&cd
-CoCreateInstance=: 'ole32 CoCreateInstance > i *c i i *c *i'&cd
-CoGetObject=: 'ole32 CoGetObject      > i *w i *c *i'&cd
+CoCreateInstance=: 'ole32 CoCreateInstance > i *c i i *c *x'&cd
+CoGetObject=: 'ole32 CoGetObject      > i *w i *c *x'&cd
 
-VariantClear=: 'oleaut32 VariantClear > i *i'&cd
-VariantChangeType=: 'oleaut32 VariantChangeType > i *i *i i i'&cd
-SysFreeString=: 'oleaut32 SysFreeString > i i'&cd
+VariantClear=: 'oleaut32 VariantClear > i *x'&cd
+VariantChangeType=: 'oleaut32 VariantChangeType > i *i *i i s'&cd
+SysFreeString=: 'oleaut32 SysFreeString > n i'&cd
 SysAllocStringLen=: 'oleaut32 SysAllocStringLen > i *w i'&cd
-CoGetActiveObject=: 'oleaut32 GetActiveObject     > i *c i *i'&cd
+CoGetActiveObject=: 'oleaut32 GetActiveObject     > i *c i *x'&cd
 
 GUID=: 'WWWWXXYYZZZZZZZZ'
 GUID_NULL=: (#GUID) # 0{a.
@@ -46,6 +47,8 @@ IID_IDispatch=: '{00020400-0000-0000-C000-000000000046}'
 
 'CLSCTX_INPROC_SERVER CLSCTX_LOCAL_SERVER'=: 16b0001 16b0004
 CTX=: CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
+
+'COINIT_APARTMENTTHREADED COINIT_MULTITHREADED' =: 2 0
 
 'VT_EMPTY VT_NULL VT_I2 VT_I4  VT_R4 VT_R8 VT_CY VT_DATE'=: i.8
 'VT_BSTR VT_DISPATCH VT_ERROR VT_BOOL'=: 8+i.4
@@ -67,19 +70,19 @@ CTX=: CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
   ReleaseFuncDesc ReleaseVarDesc
 )
 
-iuQueryInterface=: IU_QueryInterface icall 'i x  *c *i' @ ;
+iuQueryInterface=: IU_QueryInterface icall 'i x  *c *x' @ ;
 iuAddRef=: IU_AddRef icall 'i x' @ [
 iuRelease=: IU_Release icall 'i x' @ [
-idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x  *c *i i i *i' @ ;
-idGetTypeInfo=: ID_GetTypeInfo icall 'i x  i i *i' @ ;
-idInvoke=: ID_Invoke icall 'i x  i *c i s *i *i i i' @ ;
-itGetTypeAttr=: IT_GetTypeAttr icall 'i x  *i' @ ;
-itReleaseTypeAttr=: IT_ReleaseTypeAttr icall 'i x  i' @ ;
-itGetFuncDesc=: IT_GetFuncDesc icall 'i x  i *i' @ ;
-itReleaseFuncDesc=: IT_ReleaseFuncDesc icall 'i x  i' @ ;
-itGetNames=: IT_GetNames icall 'i x  i *i i *i' @ ;
-itGetDocumentation=: IT_GetDocumentation icall 'i x  i *i *i i i' @ ;
-itGetRefTypeInfo=: IT_GetRefTypeInfo icall 'i x  i *i' @ ;
+idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x  *c *x x x *x' @ ;
+idGetTypeInfo=: ID_GetTypeInfo icall 'i x  x x *x' @ ;
+idInvoke=: ID_Invoke icall 'i x  x *c x s *x *x x x' @ ;
+itGetTypeAttr=: IT_GetTypeAttr icall 'i x  *x' @ ;
+itReleaseTypeAttr=: IT_ReleaseTypeAttr icall 'i x  x' @ ;
+itGetFuncDesc=: IT_GetFuncDesc icall 'i x  x *x' @ ;
+itReleaseFuncDesc=: IT_ReleaseFuncDesc icall 'i x  x' @ ;
+itGetNames=: IT_GetNames icall 'i x  x *x x *x' @ ;
+itGetDocumentation=: IT_GetDocumentation icall 'i x  x *x *x x x' @ ;
+itGetRefTypeInfo=: IT_GetRefTypeInfo icall 'i x  x *x' @ ;
 
 hex8=: ,~ '00000000' }.~ #
 hfd8=: '0x' , hex8@hfd
@@ -243,9 +246,9 @@ IID_IGlobalInterfaceTable=: '{00000146-0000-0000-C000-000000000046}'
   RegisterInterfaceInGlobal RevokeInterfaceFromGlobal GetInterfaceFromGlobal
 )
 
-gitRegisterInterfaceInGlobal=: GIT_RegisterInterfaceInGlobal icall 'i x  i *c *i' @ ;
-gitRevokeInterfaceFromGlobal=: GIT_RevokeInterfaceFromGlobal icall 'i x  i' @ ;
-gitGetInterfaceFromGlobal=: GIT_GetInterfaceFromGlobal icall 'i x  i *c *i' @ ;
+gitRegisterInterfaceInGlobal=: GIT_RegisterInterfaceInGlobal icall 'i x  x *c *x' @ ;
+gitRevokeInterfaceFromGlobal=: GIT_RevokeInterfaceFromGlobal icall 'i x  x' @ ;
+gitGetInterfaceFromGlobal=: GIT_GetInterfaceFromGlobal icall 'i x  x *c *x' @ ;
 
 gitGet=: 3 : 0
 IID_IDispatch gitGet y
@@ -256,6 +259,8 @@ herr git gitGetInterfaceFromGlobal y;iid;p=. ,2-2
 git iuRelease ''
 {.p
 )
+
+CoInitializeEx^:IFCONSOLE 0;COINIT_APARTMENTTHREADED
 
 NB. ------- include files from oleg pcall end ---------------
 NB. =========================================================
