@@ -488,8 +488,8 @@ rz
 )
 olemethod=: DISPATCH_METHOD oleinvoke
 oleget=: DISPATCH_PROPERTYGET oleinvoke
-oleset=: DISPATCH_PROPERTYPUT oleinvoke
-olesetref=: DISPATCH_PROPERTYPUTREF oleinvoke
+oleput=: oleset=: DISPATCH_PROPERTYPUT oleinvoke
+oleputref=: olesetref=: DISPATCH_PROPERTYPUTREF oleinvoke
 oleid=: 3 : 0
 oleerrno=: S_OK
 if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype y do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
