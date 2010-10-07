@@ -368,6 +368,9 @@ for_ai. a do. ((>ai),'_z_')=: ".>ai end.
 i. 0 0
 )
 VariantInit=: 'oleaut32 VariantInit > n *'&cd
+SafeArrayCreate=: 'oleaut32 SafeArrayCreate > x s i *i'&cd
+SafeArrayAccessData=: 'oleaut32 SafeArrayAccessData > s x *x'&cd
+SafeArrayUnaccessData=: 'oleaut32 SafeArrayUnaccessData > s x'&cd
 SafeArrayDestroy=: 'oleaut32 SafeArrayDestroy > s x'&cd
 SafeArrayCreateVector=: 'oleaut32 SafeArrayCreateVector > x s i i'&cd
 SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i x'&cd
@@ -412,29 +415,34 @@ assert. x =&# y
 if. 0=#y do. 0 return. end.
 vargs=. mema 16 * #y
 for_i. i.#y do.
-  VariantInit <<arr=. vargs + 16 * i
-  s=. >i{y
-  (>i{x) memw arr, 0, 1, 4
-  select. 16bfff (17 b.) i{x
-  case. VT_BOOL do.
-    ((s=0){_1 0) memw arr, 8, 1, 4
-  case. VT_BSTR do.
-    bstr=. SysAllocStringLen (];#) uucp ,s
-    bstr memw arr, 8, 1, 4
-  case. VT_I4 do.
-    s memw arr, 8, 1, 4
-  case. VT_R8 do.
-    s memw arr, 8, 1, 8
-  case. VT_UNKNOWN;VT_DISPATCH;VT_VARIANT;VT_SAFEARRAY do.
-    if. 0=#s do.
-      0 memw arr, 8, 1, 4
-    else.
+  s=. >i{y [ vt=. >i{x
+  if. 32 = 3!:0 s do.
+    arr=. vargs + 16 * i
+    (memr (>s), 0 16 2) memw arr, 0 16 2
+  else.
+    VariantInit <<arr=. vargs + 16 * i
+    (1 ic vt) memw arr, 0, 2, 2
+    select. 16bfff (17 b.) vt
+    case. VT_BOOL do.
+      ((s=0){_1 0) memw arr, 8, 1, 4
+    case. VT_BSTR do.
+      bstr=. SysAllocStringLen (];#) uucp ,s
+      bstr memw arr, 8, 1, 4
+    case. VT_I4 do.
       s memw arr, 8, 1, 4
+    case. VT_R8 do.
+      s memw arr, 8, 1, 8
+    case. VT_UNKNOWN;VT_DISPATCH do.
+      if. 0=#s do.
+        0 memw arr, 8, 1, 4
+      else.
+        s memw arr, 8, 1, 4
+      end.
+    case. VT_EMPTY do.
+      0 memw arr, 8, 1, 4
+    case. do.
+      assert. 0
     end.
-  case. VT_EMPTY do.
-    0 memw arr, 8, 1, 4
-  case. do.
-    assert. 0
   end.
 end.
 vargs
@@ -443,7 +451,7 @@ vargs
 makedispparms=: 4 : 0
 dispparams=. mema SZI+SZI+4+4
 ((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
-(x makevariant&|. y) memw dispparams, 0, 1, 4
+(|. x makevariant y) memw dispparams, 0, 1, 4
 (#y) memw dispparams, (2*SZI), 1, 4                 NB. name argument set later
 dispparams
 )
@@ -525,6 +533,7 @@ olevalue=: 3 : 0
 'vt vector array byref'=. oletype y
 if. byref do. y=. {. memr y, 8, 1, 4 end.
 select. vt
+case. VT_I4 do. {. _2&ic memr y, 8, 4, 2
 case. VT_R4 do. {. _1&fc memr y, 8, 4, 2
 case. VT_R8 do. {. memr y, 8, 1, 8
 case. VT_BSTR do. 6 u: memr b, 0, (_2&ic memr b, _4 4 2), 2 [ b=. {.memr y, 8 1 4
@@ -532,22 +541,99 @@ case. do. {. memr y, 8, 1, 4
 end.
 )
 
-olevector=: 4 : 0
-elms=. ,y
-vt=. x
-if. 0= propVals=. SafeArrayCreateVector vt ; 0 ; #elms do.
-  0 return.
-end.
-failure=. 0
-for_i. i.#elms do.
-  if. S_OK&~: hr=. SafeArrayPutElement propVals ; (,i) (;<) <i{elms do.
-    failure=. 1 break.
+olevector=: [ olesafearray ,@]
+
+olesafearray=: 4 : 0
+if. 0=#$y do. y=. ,y end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_UNKNOWN) {~ 2 131072 1 4 8 32 i. 3!:0 y end.
+if. (VT_UNKNOWN=x) *. 1 4 e.~ 3!:0 y do. 0 return. end.
+if. _1=x do.
+  if. *./ 2 131072 e.~ t=. , 3!:0 &> y do. x=. VT_BSTR
+  elseif. *./ 1 4 e.~ t do. x=. VT_I4 [ y=. ($y) $ ,>y
+  elseif. *./ 1 4 8 e.~ t do. x=. VT_R8 [ y=. ($y) $ ,>y
+  elseif. *./ 2 131072 1 4 8 32 e.~ t do. x=. VT_VARIANT
+  elseif. do. 0 return.
   end.
 end.
-if. 0=failure do.
-  propVals
-else.
-  SafeArrayDestroy propVals
-  0
+if. VT_BSTR=x do.
+  if. 32= 3!:0 y do.
+    y=. SysAllocStringLen@:(];#)@:uucp&> y
+  else.
+    y=. SysAllocStringLen@:(];#)@:uucp("1) y
+  end.
+  if. 0=#$y do. y=. ,y end.
 end.
+if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
+  0 return.
+end.
+if. 0= #,y do. sa return. end.
+p=. ,2-2    NB. pointer to rawdata
+if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
+  SafeArrayDestroy sa
+  0 return.
+end.
+NB. rawdata is column major
+if. VT_I4 = x do.
+  if. IF64 do.
+    (2 ic (2-2) + ,|:y) memw p, 0, (4*#,y), 2
+  else.
+    ((2-2) + ,|:y) memw p, 0, (#,y), 4
+  end.
+elseif. VT_R8 = x do.
+  (,|:y) memw p, 0, (#,y), 8
+elseif. VT_BSTR = x do.
+  (,|:y) memw p, 0, (#,y), 4
+elseif. VT_VARIANT = x do.
+  if. 2>#@$y do. y=. ,:y end.
+  n1=. {.@$y                       NB. column major
+  for_i. i.{.@$ y do.
+    for_j. i.{:@$ y do.
+      if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
+        (1 ic VT_BSTR) memw p, (16*i+n1*j), 2 2
+        (SysAllocStringLen@:(];#)@:uucp elm) memw p, (8+16*i+n1*j), 1 4
+      elseif. 1 4 e.~ te do.
+        (1 ic VT_I4) memw p, (16*i+n1*j), 2 2
+        if. IF64 do.
+          (2 ic (2-2)+ elm) memw p, (8+16*i+n1*j), 4 2
+        else.
+          ((2-2)+ elm) memw p, (8+16*i+n1*j), 1 4
+        end.
+      elseif. 32 = te do.
+        if. 1 4 e.~ 3!:0 >elm do.
+          (1 ic VT_UNKNOWN) memw p, (16*i+n1*j), 2 2
+          if. IF64 do.
+            (2 ic (2-2)+ >elm) memw p, (8+16*i+n1*j), 4 2
+          else.
+            ((2-2)+ >elm) memw p, (8+16*i+n1*j), 1 4
+          end.
+        else.
+          SafeArrayUnaccessData sa
+          SafeArrayDestroy sa
+          0 return.
+        end.
+      elseif. 8 = te do.
+        (1 ic VT_R8) memw p, (16*i+n1*j), 2 2
+        elm memw p, (8+16*i+n1*j), 1 8
+      elseif. do.
+        SafeArrayUnaccessData sa
+        SafeArrayDestroy sa
+        0 return.
+      end.
+    end.
+  end.
+elseif. VT_UNKNOWN = x do.
+  (,|:y) memw p, 0, (#,y), 4
+elseif. do.
+  assert. 0   NB. should not happen
+end.
+if. S_OK~: hr=. SafeArrayUnaccessData sa do.
+  SafeArrayDestroy sa
+  0 return.
+end.
+NB. wrap safearray inside a variant for oleautomation
+arr=. mema 16
+VariantInit <<arr
+(1 ic VT_ARRAY+x) memw arr, 0, 2, 2
+sa memw arr, 8, 1, 4
+arr
 )
