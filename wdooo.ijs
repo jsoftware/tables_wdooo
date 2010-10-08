@@ -1,5 +1,5 @@
 'require'~'dll'
-symdat_z_=: 3 : 0
+symdat_z_=: 3 : 0   
 had=. {.memr y,(IF64{4 8),1,JPTR
 had+{.memr had,0,1,JINT
 )
@@ -61,19 +61,19 @@ CTX=: CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
   ReleaseFuncDesc ReleaseVarDesc
 )
 
-iuQueryInterface=: IU_QueryInterface icall 'i x  *c *x' @ ;
+iuQueryInterface=: IU_QueryInterface icall 'i x *c *x' @ ;
 iuAddRef=: IU_AddRef icall 'i x' @ [
 iuRelease=: IU_Release icall 'i x' @ [
-idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x  *c *x x x *x' @ ;
-idGetTypeInfo=: ID_GetTypeInfo icall 'i x  x x *x' @ ;
-idInvoke=: ID_Invoke icall 'i x  x *c x s *x *x x x' @ ;
-itGetTypeAttr=: IT_GetTypeAttr icall 'i x  *x' @ ;
-itReleaseTypeAttr=: IT_ReleaseTypeAttr icall 'i x  x' @ ;
-itGetFuncDesc=: IT_GetFuncDesc icall 'i x  x *x' @ ;
-itReleaseFuncDesc=: IT_ReleaseFuncDesc icall 'i x  x' @ ;
-itGetNames=: IT_GetNames icall 'i x  x *x x *x' @ ;
-itGetDocumentation=: IT_GetDocumentation icall 'i x  x *x *x x x' @ ;
-itGetRefTypeInfo=: IT_GetRefTypeInfo icall 'i x  x *x' @ ;
+idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x *c *x x x *x' @ ;
+idGetTypeInfo=: ID_GetTypeInfo icall 'i x x x *x' @ ;
+idInvoke=: ID_Invoke icall 'i x x *c x s *x *x x x' @ ;
+itGetTypeAttr=: IT_GetTypeAttr icall 'i x *x' @ ;
+itReleaseTypeAttr=: IT_ReleaseTypeAttr icall 'i x x' @ ;
+itGetFuncDesc=: IT_GetFuncDesc icall 'i x x *x' @ ;
+itReleaseFuncDesc=: IT_ReleaseFuncDesc icall 'i x x' @ ;
+itGetNames=: IT_GetNames icall 'i x x *x x *x' @ ;
+itGetDocumentation=: IT_GetDocumentation icall 'i x x *x *x x x' @ ;
+itGetRefTypeInfo=: IT_GetRefTypeInfo icall 'i x x *x' @ ;
 
 hex8=: ,~ '00000000' }.~ #
 hfd8=: '0x' , hex8@hfd
@@ -107,7 +107,7 @@ guid
 )
 
 h=: ([: ;:^:_1"1 [: <"1 hfd)@(([: , _4 (_2&(3!:4))@|.\ ])^:(2=3!:0))
-si=: I.@E.~
+si=: I.@E.~   
 us=: 0&(3!:4)
 mi=: [: {.@memr ,&(0 1,JINT)
 mc=: ,&0@] memr@, ,&JCHAR@[
@@ -117,8 +117,8 @@ and=: 17 b.
 
 GetStr=: 3 : 0
 if. 0=y do. ''return. end.
-len=. mi _4+y
-val=. len mc y
+len=. mi _4+y    
+val=. len mc y   
 8 u: 6 u: val
 )
 
@@ -132,7 +132,6 @@ r
 AllocStr=: 3 : 0
 SysAllocStringLen y;#y
 )
-
 VariantAlloc=: 3 : '(2-2)#~4%~#VAR2'
 VariantStr=: GetStr@(2&{)
 
@@ -168,7 +167,6 @@ case. VT_BOOL do. 0~:2{y
 case. do. VariantStr y [ VariantChangeType y;y;0;VT_BSTR
 end.
 )
-
 cut=: ' '&$: :([: -.&a: <;._2@,~)
 
 VTSTR=: ; <@cut;._2 (0 : 0)
@@ -203,22 +201,22 @@ r
 FuncDesc=: 4 : 0"0
 herr x itGetFuncDesc y ; pfd=. ,_2
 mid=. 0 mI pfd
-if. c=. (FUNCDESC si 'Cp') mS pfd do.
-  p=. (FUNCDESC si 'Parm') mI pfd
+if. c=. (FUNCDESC si 'Cp') mS pfd do.    
+  p=. (FUNCDESC si 'Parm') mI pfd        
   r=. x <@TypeDesc p+(#ELEMDESC)*i.c
 else. r=. '' end.
-r=. r,~<x TypeDesc {.(FUNCDESC si 'Lptd') + pfd
+r=. r,~<x TypeDesc {.(FUNCDESC si 'Lptd') + pfd  
 herr x itReleaseFuncDesc {.pfd
 
 res=. (c+1)#_1
 herr x itGetNames mid ; res ; (#res) ; ,_1
 res=. 0 (I.res=_1)}res
-r (, ' '&,)&.> <@GetStrSafeFree"0 res
+r (, ' '&,)&.> <@GetStrSafeFree"0 res    
 )
 
 GetDoc=: 4 : 0"0
 herr x itGetDocumentation y ; (name=. ,_2) ; (doc=. ,_2) ; 0 ; 0
-<@GetStrSafeFree"0 name,doc
+<@GetStrSafeFree"0 name,doc           
 )
 
 FuncDoc=: 4 : 0"0
@@ -235,9 +233,9 @@ IID_IGlobalInterfaceTable=: '{00000146-0000-0000-C000-000000000046}'
   RegisterInterfaceInGlobal RevokeInterfaceFromGlobal GetInterfaceFromGlobal
 )
 
-gitRegisterInterfaceInGlobal=: GIT_RegisterInterfaceInGlobal icall 'i x  x *c *x' @ ;
-gitRevokeInterfaceFromGlobal=: GIT_RevokeInterfaceFromGlobal icall 'i x  x' @ ;
-gitGetInterfaceFromGlobal=: GIT_GetInterfaceFromGlobal icall 'i x  x *c *x' @ ;
+gitRegisterInterfaceInGlobal=: GIT_RegisterInterfaceInGlobal icall 'i x x *c *x' @ ;
+gitRevokeInterfaceFromGlobal=: GIT_RevokeInterfaceFromGlobal icall 'i x x' @ ;
+gitGetInterfaceFromGlobal=: GIT_GetInterfaceFromGlobal icall 'i x x *c *x' @ ;
 
 gitGet=: 3 : 0
 IID_IDispatch gitGet y
@@ -353,7 +351,7 @@ TYPE_E_UNKNOWNLCID 0x8002802E
 TYPE_E_UNSUPFORMAT 0x80028019
 TYPE_E_WRONGTYPEKIND 0x8002802A
 )
-coclass 'wdooo'
+coclass 'oleutil'
 coinsert 'olecomerrorh'
 coinsert 'olegpcall'
 coinsert 'olegpole32'
@@ -373,35 +371,19 @@ SafeArrayAccessData=: 'oleaut32 SafeArrayAccessData > s x *x'&cd
 SafeArrayUnaccessData=: 'oleaut32 SafeArrayUnaccessData > s x'&cd
 SafeArrayDestroy=: 'oleaut32 SafeArrayDestroy > s x'&cd
 SafeArrayCreateVector=: 'oleaut32 SafeArrayCreateVector > x s i i'&cd
-SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i x'&cd
+SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i *'&cd
 S_OK=: 0
+SZI=: IF64{4 8
 
 DISPID_PROPERTYPUT=: _3
 dispidNamed=: 2&ic DISPID_PROPERTYPUT
 pdispidNamed=: symdat@symget < 'dispidNamed'
-iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
+iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.  
 DISPATCH_METHOD=: 1
 DISPATCH_PROPERTYGET=: 2
 DISPATCH_PROPERTYPUT=: 4
 DISPATCH_PROPERTYPUTREF=: 8
 
-SZI=: IF64{4 8
-oleerrno=: S_OK
-init=: 0
-
-create=: 3 : 0
-oleerrno=: S_OK
-init=: 0
-)
-
-destroy=: 3 : 0
-if. init do.
-  VariantClear <<temp
-  memf temp
-  base iuRelease ''
-end.
-codestroy''
-)
 dispid=: 4 : 0
 assert. x~:0
 y=. uucp y
@@ -414,6 +396,7 @@ makevariant=: 4 : 0
 assert. x =&# y
 if. 0=#y do. 0 return. end.
 vargs=. mema 16 * #y
+((16 * #y)#{.a.) memw vargs, 0, (16 * #y), 2
 for_i. i.#y do.
   s=. >i{y [ vt=. >i{x
   if. 32 = 3!:0 s do.
@@ -451,12 +434,13 @@ vargs
 makedispparms=: 4 : 0
 dispparams=. mema SZI+SZI+4+4
 ((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
-(|. x makevariant y) memw dispparams, 0, 1, 4
-(#y) memw dispparams, (2*SZI), 1, 4                 NB. name argument set later
+(x makevariant&|. y) memw dispparams, 0, 1, 4       
+(#y) memw dispparams, (2*SZI), 1, 4                 
 dispparams
 )
 
-freedispparms=: 3 : 0
+freedispparms=: 4 : 0
+msk=. |.x
 if. IF64 do.
   'a b c1'=. memr y, 0, 3, 4
   c=. c1 (17 b.) 16bffffffff
@@ -464,12 +448,196 @@ else.
   'a b c d'=. memr y, 0, 4, 4
 end.
 if. a do.
-  VariantClear@<@<"0 a+16*i.#c
+  assert. c = #msk
+  if. 1 e. msk do.
+    VariantClear@<@<"0 a+msk#16*i.-c     
+  end.
   memf a
 end.
 memf y
 )
+olevaralloc=: 3 : 0
+f=. mema 16
+(16#{.a.) memw f, 0 16 2
+VariantInit <<f
+f
+)
+olevarfree=: 3 : 0
+if. y do.
+  memf y [ VariantClear <<y
+end.
+)
+coclass 'oleooo'
+coinsert 'oleutil'
+((<'OOoNumberFormat_') ,&.> ;:'DEFINED DATE TIME CURRENCY NUMBER SCIENTIFIC FRACTION PERCENT TEXT DATETIME LOGICAL UNDEFINED')=: <. 2^i.12
+OOoNumberFormat_DATETIME=: OOoNumberFormat_DATE + OOoNumberFormat_TIME
+OOoNumberFormat_ALL=: 0
+((<'OOoCharWeight_') ,&.> ;:'DONTKNOW THIN ULTRALIGHT LIGHT SEMILIGHT NORMAL SEMIBOLD BOLD ULTRABOLD BLACK')=: 0 50 60 75 90 100 110 150 175 200
+((<'OOoHoriJustify_') ,&.> ;:'STANDARD LEFT CENTER RIGHT BLOCK REPEAT')=: i.6
+((<'OOoFontUnderline_') ,&.> ;:'NONE SINGLE DOUBLE DOTTED DONTKNOW DASH LONGDASH DASHDOT DASHDOTDOT SMALLWAVE WAVE DOUBLEWAVE BOLD BOLDDOTTED BOLDDASH BOLDLONGDASH BOLDDASHDOT BOLDDASHDOTDOT BOLDWAVE')=: i.19
+((<'OOoCellFlags_') ,&.> ;:'VALUE DATETIME STRING ANNOTATION FORMULA HARDATTR STYLES OBJECTS EDITATTR FORMATTED')=: <.2^i.10
+OOoinvoke=: 1 : 0
+'' (m OOoinvoke) y
+:
+'disp name temp'=. 3{. y
+args=. 3}.y
+oleerrno=: S_OK
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. S_OK~: 0{:: 'hr id'=. disp dispid name do. hr return. end.
+if. temp do. VariantClear <<temp end.
+msk=. 32&~:@(3!:0)&> args
+dispparams=. x makedispparms args
+if. m=DISPATCH_PROPERTYPUT do.
+  pdispidNamed memw dispparams, SZI, 1, 4
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+end.
+hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0
+msk freedispparms dispparams
+hr
+)
+OOoRGB=: 3 : 0
+(2{y) (23 b.) 8 (33 b.) (1{y) (23 b.) 8 (33 b.) (0{y)
+)
+filetoURL=: 3 : 0
+path=. y
+if. (':' -.@e. path) *. ('/\'-.@e.~{.path) do. path=. (1!:43 ''), '/', path end.
+path=. ('/'&,)^:('/'~:{.path) path=. '\/' charsub path
+path=. 'file://', path stringreplace~ ' ' ; '%20' ; '#' ; '%23' ; '%' ; '%25' ; '&' ; '%26' ; ';' ; '%3B' ; '<' ; '%3C' ; '=' ; '%3D' ; '>' ; '%3E' ; '?' ; '%3F' ; '~' ; '%7E'
+)
+OOoCreateStruct=: 4 : 0
+disp=. y
+name=. x
+ostru=. 0
+cotmp=. olevaralloc ''
+if. S_OK&= hr=. (DISPATCH_METHOD OOoinvoke) disp ; 'Bridge_GetStruct' ; cotmp ; name do.
+  '' iuAddRef~ ostru=. olevalue cotmp
+end.
+olevarfree cotmp
+ostru
+)
+OOoPutStruct=: 4 : 0
+disp=. y
+'slot val vts'=. x
+({.vts) (DISPATCH_PROPERTYPUT OOoinvoke) disp ; slot ; 0 ; val
+)
+OOoGetStruct=: 4 : 0
+disp=. y
+slot=. >x
+cotmp=. olevaralloc ''
+hr=. (DISPATCH_PROPERTYGET OOoinvoke) disp ; slot ; cotmp
+hr ;< cotmp
+)
+OOoPropertyValue=: 4 : 0
+disp=. y
+'name value vts'=. 3{.x, a:
+if. 0=#vts do.
+  vts=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> value=. boxopen value)
+end.
+if. 0~: obj=. 'com.sun.star.beans.PropertyValue' OOoCreateStruct disp do.
+  failure=. 1
+  whilst. 0 do.
+    if. S_OK&~: hr=. ('Name' ; name ; VT_BSTR) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('Value' ; value ; vts) OOoPutStruct obj do. break. end.
+    failure=. 0
+  end.
+  if. 0=failure do.
+    obj
+  else.
+    0 [ obj iuRelease ''
+  end.
+else.
+  0
+end.
+)
+OOoMakeCellBorderLine=: 4 : 0
+disp=. y
+'nColor WidthDistance'=. x
+if. 0~: obj=. 'com.sun.star.table.BorderLine' OOoCreateStruct disp do.
+  failure=. 1
+  whilst. 0 do.
+    if. S_OK&~: hr=. ('Color' ; nColor ; VT_I4) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('InnerLineWidth' ; (0{WidthDistance) ; VT_I2) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('OuterLineWidth' ; (1{WidthDistance) ; VT_I2) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('LineDistance' ; (2{WidthDistance) ; VT_I2) OOoPutStruct obj do. break. end.
+    failure=. 0
+  end.
+  if. 0=failure do.
+    obj
+  else.
+    0 [ obj iuRelease ''
+  end.
+else.
+  0
+end.
+)
+OOoGetNumberFormat=: 4 : 0
+disp=. y
+'fmt lang country'=. 3{.(boxopen x), '' ; ''
+if. 0~: obj=. 'com.sun.star.lang.Locale' OOoCreateStruct disp do.
+  failure=. 1
+  cotmp=. olevaralloc ''
+  whilst. 0 do.
+    if. ''-.@-:lang do.
+      if. S_OK&~: hr=. ('Language' ; lang ; VT_BSTR) OOoPutStruct obj do. break. end.
+    end.
+    if. ''-.@-:country do.
+      if. S_OK&~: hr=. ('Country' ; country ; VT_BSTR) OOoPutStruct obj do. break. end.
+    end.
+    if. S_OK&~: hr=. '' (DISPATCH_METHOD OOoinvoke) disp ; 'getNumberFormats' ; cotmp do. break. end.
+    coAddRef nf=. olevalue cotmp
+    if. 1 4 e.~ 3!:0 fmt do.
+      whilst. 0 do.
+        if. S_OK&~: hr=. (VT_I4, VT_UNKNOWN) (DISPATCH_METHOD OOoinvoke) nf ; 'getStandardFormat' ; cotmp ; fmt ; obj do. break. end.
+        fmtid=. olevalue cotmp
+        failure=. 0
+      end.
+    else.
+      whilst. 0 do.
+        coAddRef obj   
+        if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN, VT_BOOL) (DISPATCH_METHOD OOoinvoke) nf ; 'queryKey' ; cotmp ; fmt ; obj ; 1 do. break. end.
+        fmtid=. olevalue cotmp
+        if. _1=fmtid do.
+          if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN) (DISPATCH_METHOD OOoinvoke) nf ; 'addNew' ; cotmp ; fmt ; obj do. break. end.
+          fmtid=. olevalue cotmp
+          failure=. 0
+        else.
+          failure=. 0
+        end.
+      end.
+    end.
+    nf iuRelease ''
+  end.
+  olevarfree cotmp
+  obj iuRelease ''
+  if. 0=failure do.
+    fmtid
+  else.
+    _1
+  end.
+else.
+  _1
+end.
+)
+coclass 'wdooo'
+coinsert 'oleutil'
+coinsert 'oleooo'
 
+oleerrno=: S_OK
+init=: 0
+
+create=: 3 : 0
+oleerrno=: S_OK
+init=: 0
+)
+
+destroy=: 3 : 0
+if. init do.
+  VariantClear <<temp
+  memf temp
+  base iuRelease ''
+end.
+codestroy''
+)
 oleinvoke=: 1 : 0
 '' (m oleinvoke) y
 :
@@ -478,20 +646,21 @@ args=. 2}.y
 oleerrno=: S_OK
 if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
 newdisp=. 0
-if. disp=temp do.
+if. disp=temp do.  
   if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
   newdisp=. 1
   '' iuAddRef~ disp=. {. memr temp, 8, 1, 4
 end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. 13!:8[3 [ oleerrno=: hr end.
 VariantClear <<temp
+msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
   pdispidNamed memw dispparams, SZI, 1, 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
 end.
 if. S_OK~: hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
-freedispparms dispparams
+msk freedispparms dispparams
 if. newdisp do. disp iuRelease '' end.
 temp
 )
@@ -501,7 +670,7 @@ if. S_OK= hr=. CLSIDFromProgID`CLSIDFromString@.('{'={.@>@{.) y ; guid=. 1#GUID 
   if. S_OK= hr=. CoCreateInstance guid ; 0 ; CTX ; iid_idisp ; p=. ,_2 do.
     base=: {.p
     init=: 1
-    VariantInit <<temp=: mema 16
+    temp=: olevaralloc ''
     rz=. base, temp
   end.
 end.
@@ -542,11 +711,10 @@ end.
 )
 
 olevector=: [ olesafearray ,@]
-
 olesafearray=: 4 : 0
 if. 0=#$y do. y=. ,y end.
 if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_UNKNOWN) {~ 2 131072 1 4 8 32 i. 3!:0 y end.
-if. (VT_UNKNOWN=x) *. 1 4 e.~ 3!:0 y do. 0 return. end.
+if. (0~:#,y) *. (VT_UNKNOWN=x) *. 1 4 -.@e.~ 3!:0 y do. 0 return. end.
 if. _1=x do.
   if. *./ 2 131072 e.~ t=. , 3!:0 &> y do. x=. VT_BSTR
   elseif. *./ 1 4 e.~ t do. x=. VT_I4 [ y=. ($y) $ ,>y
@@ -561,79 +729,548 @@ if. VT_BSTR=x do.
   else.
     y=. SysAllocStringLen@:(];#)@:uucp("1) y
   end.
-  if. 0=#$y do. y=. ,y end.
+elseif. VT_VARIANT~:x do.
+  if. 32= 3!:0 y do.
+    try.
+      y=. {.&> y
+    catch.
+      0 return.
+    end.
+    if. 32= 3!:0 y do. 0 return. end.
+  end.
 end.
+if. 0=#$y do. y=. ,y end.
 if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
   0 return.
 end.
-if. 0= #,y do. sa return. end.
-p=. ,2-2    NB. pointer to rawdata
-if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
-  SafeArrayDestroy sa
-  0 return.
-end.
-NB. rawdata is column major
-if. VT_I4 = x do.
-  if. IF64 do.
-    (2 ic (2-2) + ,|:y) memw p, 0, (4*#,y), 2
-  else.
-    ((2-2) + ,|:y) memw p, 0, (#,y), 4
+if. 0~: #,y do.
+  p=. ,2-2    
+  if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
+    SafeArrayDestroy sa
+    0 return.
   end.
-elseif. VT_R8 = x do.
-  (,|:y) memw p, 0, (#,y), 8
-elseif. VT_BSTR = x do.
-  (,|:y) memw p, 0, (#,y), 4
-elseif. VT_VARIANT = x do.
-  if. 2>#@$y do. y=. ,:y end.
-  n1=. {.@$y                       NB. column major
-  for_i. i.{.@$ y do.
-    for_j. i.{:@$ y do.
-      if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
-        (1 ic VT_BSTR) memw p, (16*i+n1*j), 2 2
-        (SysAllocStringLen@:(];#)@:uucp elm) memw p, (8+16*i+n1*j), 1 4
-      elseif. 1 4 e.~ te do.
-        (1 ic VT_I4) memw p, (16*i+n1*j), 2 2
-        if. IF64 do.
-          (2 ic (2-2)+ elm) memw p, (8+16*i+n1*j), 4 2
-        else.
-          ((2-2)+ elm) memw p, (8+16*i+n1*j), 1 4
-        end.
-      elseif. 32 = te do.
-        if. 1 4 e.~ 3!:0 >elm do.
-          (1 ic VT_UNKNOWN) memw p, (16*i+n1*j), 2 2
+  if. VT_I4 = x do.
+    if. IF64 do.
+      (2 ic (2-2) + ,|:y) memw p, 0, (4*#,y), 2
+    else.
+      ((2-2) + ,|:y) memw p, 0, (#,y), 4
+    end.
+  elseif. VT_R8 = x do.
+    (,|: _&<. y) memw p, 0, (#,y), 8
+  elseif. VT_BSTR = x do.
+    (,|:y) memw p, 0, (#,y), 4
+  elseif. VT_VARIANT = x do.
+    if. 2>#@$y do. y=. ,:y end.
+    n1=. {.@$y                       
+    for_i. i.{.@$ y do.
+      for_j. i.{:@$ y do.
+        if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
+          (1 ic VT_BSTR) memw p, (16*i+n1*j), 2 2
+          (SysAllocStringLen@:(];#)@:uucp elm) memw p, (8+16*i+n1*j), 1 4
+        elseif. 1 4 e.~ te do.
+          (1 ic VT_I4) memw p, (16*i+n1*j), 2 2
           if. IF64 do.
-            (2 ic (2-2)+ >elm) memw p, (8+16*i+n1*j), 4 2
+            (2 ic (2-2)+ elm) memw p, (8+16*i+n1*j), 4 2
           else.
-            ((2-2)+ >elm) memw p, (8+16*i+n1*j), 1 4
+            ((2-2)+ elm) memw p, (8+16*i+n1*j), 1 4
           end.
-        else.
+        elseif. 32 = te do.
+          if. 1 4 e.~ 3!:0 >elm do.
+            (1 ic VT_UNKNOWN) memw p, (16*i+n1*j), 2 2
+            if. IF64 do.
+              (2 ic (2-2)+ >elm) memw p, (8+16*i+n1*j), 4 2
+            else.
+              ((2-2)+ >elm) memw p, (8+16*i+n1*j), 1 4
+            end.
+          else.
+            SafeArrayUnaccessData sa
+            SafeArrayDestroy sa
+            0 return.
+          end.
+        elseif. 8 = te do.
+          (1 ic VT_R8) memw p, (16*i+n1*j), 2 2
+          elm memw p, (8+16*i+n1*j), 1 8
+        elseif. do.
           SafeArrayUnaccessData sa
           SafeArrayDestroy sa
           0 return.
         end.
-      elseif. 8 = te do.
-        (1 ic VT_R8) memw p, (16*i+n1*j), 2 2
-        elm memw p, (8+16*i+n1*j), 1 8
-      elseif. do.
-        SafeArrayUnaccessData sa
-        SafeArrayDestroy sa
-        0 return.
       end.
     end.
+  elseif. VT_UNKNOWN = x do.
+    (,|:y) memw p, 0, (#,y), 4
+  elseif. do.
+    assert. 0   
   end.
-elseif. VT_UNKNOWN = x do.
-  (,|:y) memw p, 0, (#,y), 4
-elseif. do.
-  assert. 0   NB. should not happen
+  if. S_OK~: hr=. SafeArrayUnaccessData sa do.
+    SafeArrayDestroy sa
+    0 return.
+  end.
 end.
-if. S_OK~: hr=. SafeArrayUnaccessData sa do.
-  SafeArrayDestroy sa
-  0 return.
-end.
-NB. wrap safearray inside a variant for oleautomation
-arr=. mema 16
-VariantInit <<arr
+arr=. olevaralloc ''
 (1 ic VT_ARRAY+x) memw arr, 0, 2, 2
 sa memw arr, 8, 1, 4
 arr
 )
+coclass 'oleutil'
+coinsert 'olecomerrorh'
+coinsert 'olegpcall'
+coinsert 'olegpole32'
+
+3 : 0''
+a=. ;:'VT_EMPTY VT_NULL VT_I2 VT_I4  VT_R4 VT_R8 VT_CY VT_DATE'
+a=. a, ;:'VT_BSTR VT_DISPATCH VT_ERROR VT_BOOL'
+a=. a, ;:'VT_VARIANT VT_UNKNOWN VT_DECIMAL'
+a=. a, ;:'VT_PTR VT_SAFEARRAY VT_CARRAY VT_USERDEFINED'
+a=. a, ;:'VT_VECTOR VT_ARRAY VT_BYREF VT_TYPEMASK'
+for_ai. a do. ((>ai),'_z_')=: ".>ai end.
+i. 0 0
+)
+VariantInit=: 'oleaut32 VariantInit > n *'&cd
+SafeArrayCreate=: 'oleaut32 SafeArrayCreate > x s i *i'&cd
+SafeArrayAccessData=: 'oleaut32 SafeArrayAccessData > s x *x'&cd
+SafeArrayUnaccessData=: 'oleaut32 SafeArrayUnaccessData > s x'&cd
+SafeArrayDestroy=: 'oleaut32 SafeArrayDestroy > s x'&cd
+SafeArrayCreateVector=: 'oleaut32 SafeArrayCreateVector > x s i i'&cd
+SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i *'&cd
+S_OK=: 0
+SZI=: IF64{4 8
+
+DISPID_PROPERTYPUT=: _3
+dispidNamed=: 2&ic DISPID_PROPERTYPUT
+pdispidNamed=: symdat@symget < 'dispidNamed'
+iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.  
+DISPATCH_METHOD=: 1
+DISPATCH_PROPERTYGET=: 2
+DISPATCH_PROPERTYPUT=: 4
+DISPATCH_PROPERTYPUTREF=: 8
+
+dispid=: 4 : 0
+assert. x~:0
+y=. uucp y
+nm=. ,symdat symget <,'y'
+hr=. x idGetIDsOfNames GUID_NULL;nm;1;0;r=. ,_1
+hr, r
+)
+
+makevariant=: 4 : 0
+assert. x =&# y
+if. 0=#y do. 0 return. end.
+vargs=. mema 16 * #y
+((16 * #y)#{.a.) memw vargs, 0, (16 * #y), 2
+for_i. i.#y do.
+  s=. >i{y [ vt=. >i{x
+  if. 32 = 3!:0 s do.
+    arr=. vargs + 16 * i
+    (memr (>s), 0 16 2) memw arr, 0 16 2
+  else.
+    VariantInit <<arr=. vargs + 16 * i
+    (1 ic vt) memw arr, 0, 2, 2
+    select. 16bfff (17 b.) vt
+    case. VT_BOOL do.
+      ((s=0){_1 0) memw arr, 8, 1, 4
+    case. VT_BSTR do.
+      bstr=. SysAllocStringLen (];#) uucp ,s
+      bstr memw arr, 8, 1, 4
+    case. VT_I4 do.
+      s memw arr, 8, 1, 4
+    case. VT_R8 do.
+      s memw arr, 8, 1, 8
+    case. VT_UNKNOWN;VT_DISPATCH do.
+      if. 0=#s do.
+        0 memw arr, 8, 1, 4
+      else.
+        s memw arr, 8, 1, 4
+      end.
+    case. VT_EMPTY do.
+      0 memw arr, 8, 1, 4
+    case. do.
+      assert. 0
+    end.
+  end.
+end.
+vargs
+)
+
+makedispparms=: 4 : 0
+dispparams=. mema SZI+SZI+4+4
+((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
+(x makevariant&|. y) memw dispparams, 0, 1, 4       
+(#y) memw dispparams, (2*SZI), 1, 4                 
+dispparams
+)
+
+freedispparms=: 4 : 0
+msk=. |.x
+if. IF64 do.
+  'a b c1'=. memr y, 0, 3, 4
+  c=. c1 (17 b.) 16bffffffff
+else.
+  'a b c d'=. memr y, 0, 4, 4
+end.
+if. a do.
+  assert. c = #msk
+  if. 1 e. msk do.
+    VariantClear@<@<"0 a+msk#16*i.-c     
+  end.
+  memf a
+end.
+memf y
+)
+olevaralloc=: 3 : 0
+f=. mema 16
+(16#{.a.) memw f, 0 16 2
+VariantInit <<f
+f
+)
+olevarfree=: 3 : 0
+if. y do.
+  memf y [ VariantClear <<y
+end.
+)
+coclass 'oleooo'
+coinsert 'oleutil'
+((<'OOoNumberFormat_') ,&.> ;:'DEFINED DATE TIME CURRENCY NUMBER SCIENTIFIC FRACTION PERCENT TEXT DATETIME LOGICAL UNDEFINED')=: <. 2^i.12
+OOoNumberFormat_DATETIME=: OOoNumberFormat_DATE + OOoNumberFormat_TIME
+OOoNumberFormat_ALL=: 0
+((<'OOoCharWeight_') ,&.> ;:'DONTKNOW THIN ULTRALIGHT LIGHT SEMILIGHT NORMAL SEMIBOLD BOLD ULTRABOLD BLACK')=: 0 50 60 75 90 100 110 150 175 200
+((<'OOoHoriJustify_') ,&.> ;:'STANDARD LEFT CENTER RIGHT BLOCK REPEAT')=: i.6
+((<'OOoFontUnderline_') ,&.> ;:'NONE SINGLE DOUBLE DOTTED DONTKNOW DASH LONGDASH DASHDOT DASHDOTDOT SMALLWAVE WAVE DOUBLEWAVE BOLD BOLDDOTTED BOLDDASH BOLDLONGDASH BOLDDASHDOT BOLDDASHDOTDOT BOLDWAVE')=: i.19
+((<'OOoCellFlags_') ,&.> ;:'VALUE DATETIME STRING ANNOTATION FORMULA HARDATTR STYLES OBJECTS EDITATTR FORMATTED')=: <.2^i.10
+OOoinvoke=: 1 : 0
+'' (m OOoinvoke) y
+:
+'disp name temp'=. 3{. y
+args=. 3}.y
+oleerrno=: S_OK
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. S_OK~: 0{:: 'hr id'=. disp dispid name do. hr return. end.
+if. temp do. VariantClear <<temp end.
+msk=. 32&~:@(3!:0)&> args
+dispparams=. x makedispparms args
+if. m=DISPATCH_PROPERTYPUT do.
+  pdispidNamed memw dispparams, SZI, 1, 4
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+end.
+hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0
+msk freedispparms dispparams
+hr
+)
+OOoRGB=: 3 : 0
+(2{y) (23 b.) 8 (33 b.) (1{y) (23 b.) 8 (33 b.) (0{y)
+)
+filetoURL=: 3 : 0
+path=. y
+if. (':' -.@e. path) *. ('/\'-.@e.~{.path) do. path=. (1!:43 ''), '/', path end.
+path=. ('/'&,)^:('/'~:{.path) path=. '\/' charsub path
+path=. 'file://', path stringreplace~ ' ' ; '%20' ; '#' ; '%23' ; '%' ; '%25' ; '&' ; '%26' ; ';' ; '%3B' ; '<' ; '%3C' ; '=' ; '%3D' ; '>' ; '%3E' ; '?' ; '%3F' ; '~' ; '%7E'
+)
+OOoCreateStruct=: 4 : 0
+disp=. y
+name=. x
+ostru=. 0
+cotmp=. olevaralloc ''
+if. S_OK&= hr=. (DISPATCH_METHOD OOoinvoke) disp ; 'Bridge_GetStruct' ; cotmp ; name do.
+  '' iuAddRef~ ostru=. olevalue cotmp
+end.
+olevarfree cotmp
+ostru
+)
+OOoPutStruct=: 4 : 0
+disp=. y
+'slot val vts'=. x
+({.vts) (DISPATCH_PROPERTYPUT OOoinvoke) disp ; slot ; 0 ; val
+)
+OOoGetStruct=: 4 : 0
+disp=. y
+slot=. >x
+cotmp=. olevaralloc ''
+hr=. (DISPATCH_PROPERTYGET OOoinvoke) disp ; slot ; cotmp
+hr ;< cotmp
+)
+OOoPropertyValue=: 4 : 0
+disp=. y
+'name value vts'=. 3{.x, a:
+if. 0=#vts do.
+  vts=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> value=. boxopen value)
+end.
+if. 0~: obj=. 'com.sun.star.beans.PropertyValue' OOoCreateStruct disp do.
+  failure=. 1
+  whilst. 0 do.
+    if. S_OK&~: hr=. ('Name' ; name ; VT_BSTR) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('Value' ; value ; vts) OOoPutStruct obj do. break. end.
+    failure=. 0
+  end.
+  if. 0=failure do.
+    obj
+  else.
+    0 [ obj iuRelease ''
+  end.
+else.
+  0
+end.
+)
+OOoMakeCellBorderLine=: 4 : 0
+disp=. y
+'nColor WidthDistance'=. x
+if. 0~: obj=. 'com.sun.star.table.BorderLine' OOoCreateStruct disp do.
+  failure=. 1
+  whilst. 0 do.
+    if. S_OK&~: hr=. ('Color' ; nColor ; VT_I4) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('InnerLineWidth' ; (0{WidthDistance) ; VT_I2) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('OuterLineWidth' ; (1{WidthDistance) ; VT_I2) OOoPutStruct obj do. break. end.
+    if. S_OK&~: hr=. ('LineDistance' ; (2{WidthDistance) ; VT_I2) OOoPutStruct obj do. break. end.
+    failure=. 0
+  end.
+  if. 0=failure do.
+    obj
+  else.
+    0 [ obj iuRelease ''
+  end.
+else.
+  0
+end.
+)
+OOoGetNumberFormat=: 4 : 0
+disp=. y
+'fmt lang country'=. 3{.(boxopen x), '' ; ''
+if. 0~: obj=. 'com.sun.star.lang.Locale' OOoCreateStruct disp do.
+  failure=. 1
+  cotmp=. olevaralloc ''
+  whilst. 0 do.
+    if. ''-.@-:lang do.
+      if. S_OK&~: hr=. ('Language' ; lang ; VT_BSTR) OOoPutStruct obj do. break. end.
+    end.
+    if. ''-.@-:country do.
+      if. S_OK&~: hr=. ('Country' ; country ; VT_BSTR) OOoPutStruct obj do. break. end.
+    end.
+    if. S_OK&~: hr=. '' (DISPATCH_METHOD OOoinvoke) disp ; 'getNumberFormats' ; cotmp do. break. end.
+    coAddRef nf=. olevalue cotmp
+    if. 1 4 e.~ 3!:0 fmt do.
+      whilst. 0 do.
+        if. S_OK&~: hr=. (VT_I4, VT_UNKNOWN) (DISPATCH_METHOD OOoinvoke) nf ; 'getStandardFormat' ; cotmp ; fmt ; obj do. break. end.
+        fmtid=. olevalue cotmp
+        failure=. 0
+      end.
+    else.
+      whilst. 0 do.
+        coAddRef obj   
+        if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN, VT_BOOL) (DISPATCH_METHOD OOoinvoke) nf ; 'queryKey' ; cotmp ; fmt ; obj ; 1 do. break. end.
+        fmtid=. olevalue cotmp
+        if. _1=fmtid do.
+          if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN) (DISPATCH_METHOD OOoinvoke) nf ; 'addNew' ; cotmp ; fmt ; obj do. break. end.
+          fmtid=. olevalue cotmp
+          failure=. 0
+        else.
+          failure=. 0
+        end.
+      end.
+    end.
+    nf iuRelease ''
+  end.
+  olevarfree cotmp
+  obj iuRelease ''
+  if. 0=failure do.
+    fmtid
+  else.
+    _1
+  end.
+else.
+  _1
+end.
+)
+coclass 'wdooo'
+coinsert 'oleutil'
+coinsert 'oleooo'
+
+oleerrno=: S_OK
+init=: 0
+
+create=: 3 : 0
+oleerrno=: S_OK
+init=: 0
+)
+
+destroy=: 3 : 0
+if. init do.
+  VariantClear <<temp
+  memf temp
+  base iuRelease ''
+end.
+codestroy''
+)
+oleinvoke=: 1 : 0
+'' (m oleinvoke) y
+:
+'disp name'=. 2{. y
+args=. 2}.y
+oleerrno=: S_OK
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+newdisp=. 0
+if. disp=temp do.  
+  if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
+  newdisp=. 1
+  '' iuAddRef~ disp=. {. memr temp, 8, 1, 4
+end.
+if. S_OK~: 0{:: 'hr id'=. disp dispid name do. 13!:8[3 [ oleerrno=: hr end.
+VariantClear <<temp
+msk=. 32&~:@(3!:0)&> args
+dispparams=. x makedispparms args
+if. m=DISPATCH_PROPERTYPUT do.
+  pdispidNamed memw dispparams, SZI, 1, 4
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+end.
+if. S_OK~: hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
+msk freedispparms dispparams
+if. newdisp do. disp iuRelease '' end.
+temp
+)
+olecreate=: 3 : 0
+oleerrno=: S_OK
+if. S_OK= hr=. CLSIDFromProgID`CLSIDFromString@.('{'={.@>@{.) y ; guid=. 1#GUID do.
+  if. S_OK= hr=. CoCreateInstance guid ; 0 ; CTX ; iid_idisp ; p=. ,_2 do.
+    base=: {.p
+    init=: 1
+    temp=: olevaralloc ''
+    rz=. base, temp
+  end.
+end.
+if. S_OK~: hr do. 13!:8[3 [ oleerrno=: hr end.
+rz
+)
+olemethod=: DISPATCH_METHOD oleinvoke
+oleget=: DISPATCH_PROPERTYGET oleinvoke
+oleput=: oleset=: DISPATCH_PROPERTYPUT oleinvoke
+oleputref=: olesetref=: DISPATCH_PROPERTYPUTREF oleinvoke
+oleid=: 3 : 0
+oleerrno=: S_OK
+if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype y do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
+'' iuAddRef~ d=. {. memr y, 8, 1, 4
+d
+)
+olerelease=: 3 : 0
+y iuRelease ''
+)
+oleqer=: 3 : 0
+olecomerrmsg oleerrno
+)
+oletype=: 3 : 0
+vt=. {. _1&ic memr y, 0, 2, 2
+vt0=. vt ((17 b.) (26 b.)) VT_VECTOR (23 b.) VT_ARRAY (23 b.) VT_BYREF
+vt0, 0~: vt (17 b.) VT_VECTOR, VT_ARRAY, VT_BYREF
+)
+olevalue=: 3 : 0
+'vt vector array byref'=. oletype y
+if. byref do. y=. {. memr y, 8, 1, 4 end.
+select. vt
+case. VT_I4 do. {. _2&ic memr y, 8, 4, 2
+case. VT_R4 do. {. _1&fc memr y, 8, 4, 2
+case. VT_R8 do. {. memr y, 8, 1, 8
+case. VT_BSTR do. 6 u: memr b, 0, (_2&ic memr b, _4 4 2), 2 [ b=. {.memr y, 8 1 4
+case. do. {. memr y, 8, 1, 4
+end.
+)
+
+olevector=: [ olesafearray ,@]
+olesafearray=: 4 : 0
+if. 0=#$y do. y=. ,y end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_UNKNOWN) {~ 2 131072 1 4 8 32 i. 3!:0 y end.
+if. (0~:#,y) *. (VT_UNKNOWN=x) *. 1 4 -.@e.~ 3!:0 y do. 0 return. end.
+if. _1=x do.
+  if. *./ 2 131072 e.~ t=. , 3!:0 &> y do. x=. VT_BSTR
+  elseif. *./ 1 4 e.~ t do. x=. VT_I4 [ y=. ($y) $ ,>y
+  elseif. *./ 1 4 8 e.~ t do. x=. VT_R8 [ y=. ($y) $ ,>y
+  elseif. *./ 2 131072 1 4 8 32 e.~ t do. x=. VT_VARIANT
+  elseif. do. 0 return.
+  end.
+end.
+if. VT_BSTR=x do.
+  if. 32= 3!:0 y do.
+    y=. SysAllocStringLen@:(];#)@:uucp&> y
+  else.
+    y=. SysAllocStringLen@:(];#)@:uucp("1) y
+  end.
+elseif. VT_VARIANT~:x do.
+  if. 32= 3!:0 y do.
+    try.
+      y=. {.&> y
+    catch.
+      0 return.
+    end.
+    if. 32= 3!:0 y do. 0 return. end.
+  end.
+end.
+if. 0=#$y do. y=. ,y end.
+if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
+  0 return.
+end.
+if. 0~: #,y do.
+  p=. ,2-2    
+  if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
+    SafeArrayDestroy sa
+    0 return.
+  end.
+  if. VT_I4 = x do.
+    if. IF64 do.
+      (2 ic (2-2) + ,|:y) memw p, 0, (4*#,y), 2
+    else.
+      ((2-2) + ,|:y) memw p, 0, (#,y), 4
+    end.
+  elseif. VT_R8 = x do.
+    (,|: _&<. y) memw p, 0, (#,y), 8
+  elseif. VT_BSTR = x do.
+    (,|:y) memw p, 0, (#,y), 4
+  elseif. VT_VARIANT = x do.
+    if. 2>#@$y do. y=. ,:y end.
+    n1=. {.@$y                       
+    for_i. i.{.@$ y do.
+      for_j. i.{:@$ y do.
+        if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
+          (1 ic VT_BSTR) memw p, (16*i+n1*j), 2 2
+          (SysAllocStringLen@:(];#)@:uucp elm) memw p, (8+16*i+n1*j), 1 4
+        elseif. 1 4 e.~ te do.
+          (1 ic VT_I4) memw p, (16*i+n1*j), 2 2
+          if. IF64 do.
+            (2 ic (2-2)+ elm) memw p, (8+16*i+n1*j), 4 2
+          else.
+            ((2-2)+ elm) memw p, (8+16*i+n1*j), 1 4
+          end.
+        elseif. 32 = te do.
+          if. 1 4 e.~ 3!:0 >elm do.
+            (1 ic VT_UNKNOWN) memw p, (16*i+n1*j), 2 2
+            if. IF64 do.
+              (2 ic (2-2)+ >elm) memw p, (8+16*i+n1*j), 4 2
+            else.
+              ((2-2)+ >elm) memw p, (8+16*i+n1*j), 1 4
+            end.
+          else.
+            SafeArrayUnaccessData sa
+            SafeArrayDestroy sa
+            0 return.
+          end.
+        elseif. 8 = te do.
+          (1 ic VT_R8) memw p, (16*i+n1*j), 2 2
+          elm memw p, (8+16*i+n1*j), 1 8
+        elseif. do.
+          SafeArrayUnaccessData sa
+          SafeArrayDestroy sa
+          0 return.
+        end.
+      end.
+    end.
+  elseif. VT_UNKNOWN = x do.
+    (,|:y) memw p, 0, (#,y), 4
+  elseif. do.
+    assert. 0   
+  end.
+  if. S_OK~: hr=. SafeArrayUnaccessData sa do.
+    SafeArrayDestroy sa
+    0 return.
+  end.
+end.
+arr=. olevaralloc ''
+(1 ic VT_ARRAY+x) memw arr, 0, 2, 2
+sa memw arr, 8, 1, 4
+arr
+)
+

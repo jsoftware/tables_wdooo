@@ -12,14 +12,14 @@ f1=. PATH, '/test1.xls'
 smoutput f1
 p=. '' conew 'wdooo'
 try.
-  'base temp'=: olecreate__p 'Excel.Application'
+  'base temp'=. olecreate__p 'Excel.Application'
   oleget__p base ; 'workbooks'
-  wb=: oleid__p temp
+  wb=. oleid__p temp
   olemethod__p wb ; 'open' ; f1
   oleget__p base ; 'activeworkbook'
-  awb=: oleid__p temp
+  awb=. oleid__p temp
   oleget__p awb ; 'worksheets' ; 1     NB. sheet 1-base
-  aws=: oleid__p temp
+  aws=. oleid__p temp
 NB. write string into a cell
   oleget__p aws ; 'range' ; xlcell 3 10
   range=. oleid__p temp
@@ -43,18 +43,21 @@ NB. write using safearray
   range=. oleid__p temp
   sa=. '' olesafearray__p i. 3 4
   oleput__p range ; 'value' ; <<sa
+  olevarfree__p sa
   olerelease__p range
   oleget__p aws ; 'range' ; (xlcell 2 22), ':', (xlcell 5 24)
   range=. oleid__p temp
   oleput__p range ; 'numberformat' ; '@'
   sa=. '' olesafearray__p 3 4$'cat';'dog  ';'123'   NB. trailing blanks
   oleput__p range ; 'value' ; <<sa
+  olevarfree__p sa
   olerelease__p range
   if. -.IF64 do.     NB. 64-bit oleautomation does not support safearray of variant ???
     oleget__p aws ; 'range' ; (xlcell 2 32), ':', (xlcell 5 34)
     range=. oleid__p temp
     sa=. '' olesafearray__p 3 4$'cat';123.45;'tiger'
     oleput__p range ; 'value' ; <<sa
+    olevarfree__p sa
     olerelease__p range
   end.
 NB. save and cleanup
