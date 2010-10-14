@@ -10,7 +10,7 @@ This program can work in jconsole but not on linux.
 Contributed by Bill Lam
 )
 
-VERSION=: '1.0.6'
+VERSION=: '1.0.7'
 
 RELEASE=: 'j602 j701'
 
@@ -20,6 +20,7 @@ FILES=: 0 : 0
 history.txt
 manifest.ijs
 wdooo.ijs
+jserver.ijs
 msexcel.ijs
 oocalc.ijs
 test1.xls

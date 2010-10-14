@@ -923,6 +923,8 @@ for_i. i.#y do.
   else.
     VariantInit <<arr=. vargs + 16 * i
     (1 ic vt) memw arr, 0 2 2
+    byref=. vt (17 b.) VT_BYREF
+    if. byref do. s memw arr, 8 1 4 continue. end.
     select. 16bfff (17 b.) vt
     case. VT_BOOL do.
       (1 ic (s~:0){0 _1) memw arr, 8 2 2
@@ -1260,16 +1262,26 @@ if. array do.
   p=. ,2-2    
   if. S_OK= hr=. SafeArrayAccessData sa ; p do.
     select. vt0
-    case. VT_UI1;VT_I1 do. |: (|.shape) $ a.i. memr p, 8, (*/shape), 2
-    case. VT_BOOL do. |: (|.shape) $ 0 ~: _1&ic memr p, 8, (2**/shape), 2
-    case. VT_UI2;VT_I2 do. |: (|.shape) $ _1&ic memr p, 8, (2**/shape), 2
-    case. VT_UI4;VT_I4;VT_EMPTY do. |: (|.shape) $ _2&ic memr p, 8, (4**/shape), 2
-    case. VT_UI8;VT_I8 do. |: (|.shape) $ (IF64{_2 _3)&ic memr p, 8, (SZI**/shape), 2
-    case. VT_R4 do. |: (|.shape) $ _1&fc memr p, 8, (4**/shape), 2
-    case. VT_R8 do. |: (|.shape) $ memr p, 8, (*/shape), 8
-    case. VT_BSTR do. |: (|.shape) $ <@olestr"0 memr p, 8, (*/shape), 4
+    case. VT_UI1;VT_I1 do. |: (|.shape) $ a.i. memr p, 0, (*/shape), 2
+    case. VT_BOOL do. |: (|.shape) $ 0 ~: _1&ic memr p, 0, (2**/shape), 2
+    case. VT_UI2;VT_I2 do. |: (|.shape) $ _1&ic memr p, 0, (2**/shape), 2
+    case. VT_UI4;VT_I4;VT_EMPTY do.
+      if. IF64 do.
+        |: (|.shape) $ _2&ic memr p, 0, (4**/shape), 2
+      else.
+        |: (|.shape) $ memr p, 0, (*/shape), 4
+      end.
+    case. VT_UI8;VT_I8 do.
+      if. IF64 do.
+        |: (|.shape) $ memr p, 0, (*/shape), 4
+      else.
+        |: (|.shape) $ , {.("1) _2\] _2&ic memr p, 0, (8**/shape), 2
+      end.
+    case. VT_R4 do. |: (|.shape) $ _1&fc memr p, 0, (4**/shape), 2
+    case. VT_R8 do. |: (|.shape) $ memr p, 0, (*/shape), 8
+    case. VT_BSTR do. |: (|.shape) $ <@olestr"0 memr p, 0, (*/shape), 4
     case. VT_VARIANT do. |: (|.shape) $ <@olevalue"0 ({.p)+16*i.(*/shape)
-    case. do. |: (|.shape) $ memr p, 8, (*/shape), 4
+    case. do. |: (|.shape) $ memr p, 0, (*/shape), 4
     end.
     if. S_OK~: hr=. SafeArrayUnaccessData sa do. end.
   else.
@@ -1280,8 +1292,18 @@ else.
   case. VT_UI1;VT_I1 do. {. a.i. memr y, 8 1 2
   case. VT_BOOL do. {. 0 ~: _1&ic memr y, 8 2 2
   case. VT_UI2;VT_I2 do. {. _1&ic memr y, 8 2 2
-  case. VT_UI4;VT_I4;VT_EMPTY do. {. _2&ic memr y, 8 4 2
-  case. VT_UI8;VT_I8 do. {. (IF64{_2 _3)&ic memr y, 8, SZI, 2
+  case. VT_UI4;VT_I4;VT_EMPTY do.
+    if. IF64 do.
+      {. _2&ic memr y, 8 4 2
+    else.
+      {. memr y, 8 1 4
+    end.
+  case. VT_UI8;VT_I8 do.
+    if. IF64 do.
+      {. memr y, 8 1 4
+    else.
+      {. _2&ic memr y, 8 4 2
+    end.
   case. VT_R4 do. {. _1&fc memr y, 8 4 2
   case. VT_R8 do. {. memr y, 8 1 8
   case. VT_BSTR do. olebstr {. memr y, 8 1 4
@@ -1346,7 +1368,7 @@ if. 0~: #,y do.
     if. IF64 do.
       ((2-2) + <. ,|:y) memw p, 0, (#,y), 4
     else.
-      (2 ic , 0 ,.~ <. ,|:y) memw p, 0, (8*#,y), 2
+      (2 ic , (] , (0 _1 {~ 0&>))"0 <. ,|:y) memw p, 0, (8*#,y), 2   
     end.
   elseif. VT_R4 = x do.
     (1 fc ,|: _&<. y) memw p, 0, (4*#,y), 2
