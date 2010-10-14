@@ -24,40 +24,60 @@ NB. write string into a cell
   oleget__p aws ; 'range' ; xlcell 3 10
   range=. oleid__p temp
   oleput__p range ; 'numberformat' ; '@'
-  oleput__p range ; 'value' ; 'Ms Excel'
+  oleput__p range ; 'value2' ; 'Ms Excel'
+NB. read string
+  oleget__p range ; 'value2'
+  smoutput olevalue__p temp
   olerelease__p range
 NB. write number into a cell
   oleget__p aws ; 'range' ; xlcell 4 10
   range=. oleid__p temp
-  oleput__p range ; 'value' ; 123
+  oleput__p range ; 'value2' ; 123
   oleput__p range ; 'HorizontalAlignment' ; _4152    NB. xlRight  0xffffefc8
+NB. read number
+  oleget__p range ; 'value2'
+  smoutput olevalue__p temp
   olerelease__p range
 NB. write date into a cell
   oleget__p aws ; 'range' ; xlcell 5 10
   range=. oleid__p temp
   oleput__p range ; 'numberformat' ; 'yyyy-mmm-dd'
-  oleput__p range ; 'value' ; (-&36522) 76533        NB. 2007-2-28
+  oleput__p range ; 'value2' ; (-&36522) 76533        NB. 2007-2-28
+NB. read date
+  oleget__p range ; 'value2'
+  smoutput (+&36522) olevalue__p temp
   olerelease__p range
-NB. write using safearray
+NB. write number using safearray
   oleget__p aws ; 'range' ; (xlcell 2 12), ':', (xlcell 5 14)
   range=. oleid__p temp
   sa=. '' olesafearray__p i. 3 4
-  oleput__p range ; 'value' ; <<sa
+  oleput__p range ; 'value2' ; <<sa
   olevarfree__p sa
+NB. read safearray
+  oleget__p range ; 'value2'
+  smoutput olevalue__p temp
   olerelease__p range
+NB. write string using safearray
   oleget__p aws ; 'range' ; (xlcell 2 22), ':', (xlcell 5 24)
   range=. oleid__p temp
   oleput__p range ; 'numberformat' ; '@'
   sa=. '' olesafearray__p 3 4$'cat';'dog  ';'123'   NB. trailing blanks
-  oleput__p range ; 'value' ; <<sa
+  oleput__p range ; 'value2' ; <<sa
   olevarfree__p sa
+NB. read safearray
+  oleget__p range ; 'value2'
+  smoutput olevalue__p temp
   olerelease__p range
   if. -.IF64 do.     NB. 64-bit oleautomation does not support safearray of variant ???
+NB. write box using safearray of variant
     oleget__p aws ; 'range' ; (xlcell 2 32), ':', (xlcell 5 34)
     range=. oleid__p temp
     sa=. '' olesafearray__p 3 4$'cat';123.45;'tiger'
-    oleput__p range ; 'value' ; <<sa
+    oleput__p range ; 'value2' ; <<sa
     olevarfree__p sa
+NB. read safearray
+    oleget__p range ; 'value2'
+    smoutput olevalue__p temp
     olerelease__p range
   end.
 NB. save and cleanup

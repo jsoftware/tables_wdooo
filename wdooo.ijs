@@ -817,12 +817,65 @@ coinsert 'olecomerrorh'
 coinsert 'olegpcall'
 coinsert 'olegpole32'
 
+VT_EMPTY=: 0
+VT_NULL=: 1
+VT_I2=: 2
+VT_I4=: 3
+VT_R4=: 4
+VT_R8=: 5
+VT_CY=: 6
+VT_DATE=: 7
+VT_BSTR=: 8
+VT_DISPATCH=: 9
+VT_ERROR=: 10
+VT_BOOL=: 11
+VT_VARIANT=: 12
+VT_UNKNOWN=: 13
+VT_DECIMAL=: 14
+VT_I1=: 16
+VT_UI1=: 17
+VT_UI2=: 18
+VT_UI4=: 19
+VT_I8=: 20
+VT_UI8=: 21
+VT_INT=: 22
+VT_UINT=: 23
+VT_VOID=: 24
+VT_HRESULT=: 25
+VT_PTR=: 26
+VT_SAFEARRAY=: 27
+VT_CARRAY=: 28
+VT_USERDEFINED=: 29
+VT_LPSTR=: 30
+VT_LPWSTR=: 31
+VT_RECORD=: 36
+VT_FILETIME=: 64
+VT_BLOB=: 65
+VT_STREAM=: 66
+VT_STORAGE=: 67
+VT_STREAMED_OBJECT=: 68
+VT_STORED_OBJECT=: 69
+VT_BLOB_OBJECT=: 70
+VT_CF=: 71
+VT_CLSID=: 72
+VT_BSTR_BLOB=: 16bfff
+VT_VECTOR=: 16b1000
+VT_ARRAY=: 16b2000
+VT_BYREF=: 16b4000
+VT_RESERVED=: 16b8000
+VT_ILLEGAL=: 16bffff
+VT_ILLEGALMASKED=: 16bfff
+VT_TYPEMASK=: 16bfff
+
 3 : 0''
-a=. ;:'VT_EMPTY VT_NULL VT_I2 VT_I4  VT_R4 VT_R8 VT_CY VT_DATE'
-a=. a, ;:'VT_BSTR VT_DISPATCH VT_ERROR VT_BOOL'
-a=. a, ;:'VT_VARIANT VT_UNKNOWN VT_DECIMAL'
-a=. a, ;:'VT_PTR VT_SAFEARRAY VT_CARRAY VT_USERDEFINED'
-a=. a, ;:'VT_VECTOR VT_ARRAY VT_BYREF VT_TYPEMASK'
+a=. ;:'VT_EMPTY VT_NULL VT_I2 VT_I4 VT_R4 VT_R8 VT_CY VT_DATE VT_BSTR'
+a=. a, ;:'VT_DISPATCH VT_ERROR VT_BOOL VT_VARIANT VT_UNKNOWN VT_DECIMAL'
+a=. a, ;:'VT_I1 VT_UI1 VT_UI2 VT_UI4 VT_I8 VT_UI8 VT_INT VT_UINT VT_VOID'
+a=. a, ;:'VT_HRESULT VT_PTR VT_SAFEARRAY VT_CARRAY VT_USERDEFINED VT_LPSTR'
+a=. a, ;:'VT_LPWSTR VT_RECORD VT_FILETIME VT_BLOB VT_STREAM VT_STORAGE'
+a=. a, ;:'VT_STREAMED_OBJECT VT_STORED_OBJECT VT_BLOB_OBJECT VT_CF VT_CLSID'
+a=. a, ;:'VT_BSTR_BLOB VT_VECTOR VT_ARRAY VT_BYREF VT_RESERVED VT_ILLEGAL'
+a=. a, ;:'VT_ILLEGALMASKED VT_TYPEMASK'
 for_ai. a do. ((>ai),'_z_')=: ".>ai end.
 i. 0 0
 )
@@ -833,6 +886,10 @@ SafeArrayUnaccessData=: 'oleaut32 SafeArrayUnaccessData > s x'&cd
 SafeArrayDestroy=: 'oleaut32 SafeArrayDestroy > s x'&cd
 SafeArrayCreateVector=: 'oleaut32 SafeArrayCreateVector > x s i i'&cd
 SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i *'&cd
+SafeArrayGetDim=: 'oleaut32 SafeArrayGetDim > i x'&cd
+SafeArrayGetLBound=: 'oleaut32 SafeArrayGetLBound > i x i *i'&cd
+SafeArrayGetUBound=: 'oleaut32 SafeArrayGetUBound > i x i *i'&cd
+SafeArrayGetVartype=: 'oleaut32 SafeArrayGetVartype > i x *s'&cd
 S_OK=: 0
 SZI=: IF64{4 8
 
@@ -865,25 +922,42 @@ for_i. i.#y do.
     (memr (>s), 0 16 2) memw arr, 0 16 2
   else.
     VariantInit <<arr=. vargs + 16 * i
-    (1 ic vt) memw arr, 0, 2, 2
+    (1 ic vt) memw arr, 0 2 2
     select. 16bfff (17 b.) vt
     case. VT_BOOL do.
-      ((s=0){_1 0) memw arr, 8, 1, 4
+      (1 ic (s~:0){0 _1) memw arr, 8 2 2
     case. VT_BSTR do.
       bstr=. SysAllocStringLen (];#) uucp ,s
-      bstr memw arr, 8, 1, 4
-    case. VT_I4 do.
-      s memw arr, 8, 1, 4
+      bstr memw arr, 8 1 4
+    case. VT_UI1;VT_I1 do.
+      (s{a.) memw arr, 8 1 2
+    case. VT_UI2;VT_I2 do.
+      (1 ic s) memw arr, 8 2 2
+    case. VT_UI4;VT_I4;VT_ERROR do.
+      if. IF64 do.
+        (2 ic s) memw arr, 8 4 2
+      else.
+        s memw arr, 8 1 4
+      end.
+    case. VT_UI8;VT_I8 do.
+      if. IF64 do.
+        s memw arr, 8 1 4
+      else.
+        s memw arr, 8 1 4
+        ((s<0){0 _1) memw arr, 12 1 4   
+      end.
+    case. VT_R4 do.
+      (1 fc s) memw arr, 8 4 2
     case. VT_R8 do.
-      s memw arr, 8, 1, 8
+      s memw arr, 8 1 8
     case. VT_UNKNOWN;VT_DISPATCH do.
       if. 0=#s do.
-        0 memw arr, 8, 1, 4
+        0 memw arr, 8 1 4
       else.
-        s memw arr, 8, 1, 4
+        s memw arr, 8 1 4
       end.
     case. VT_EMPTY do.
-      0 memw arr, 8, 1, 4
+      0 memw arr, 8 1 4
     case. do.
       assert. 0
     end.
@@ -895,18 +969,18 @@ vargs
 makedispparms=: 4 : 0
 dispparams=. mema SZI+SZI+4+4
 ((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
-(x makevariant&|. y) memw dispparams, 0, 1, 4       
-(#y) memw dispparams, (2*SZI), 1, 4                 
+(x makevariant&|. y) memw dispparams, 0 1 4        
+(#y) memw dispparams, (2*SZI), 1 4                 
 dispparams
 )
 
 freedispparms=: 4 : 0
 msk=. |.x
 if. IF64 do.
-  'a b c1'=. memr y, 0, 3, 4
+  'a b c1'=. memr y, 0 3 4
   c=. c1 (17 b.) 16bffffffff
 else.
-  'a b c d'=. memr y, 0, 4, 4
+  'a b c d'=. memr y, 0 4 4
 end.
 if. a do.
   assert. c = #msk
@@ -1110,15 +1184,15 @@ newdisp=. 0
 if. disp=temp do.  
   if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
   newdisp=. 1
-  '' iuAddRef~ disp=. {. memr temp, 8, 1, 4
+  '' iuAddRef~ disp=. {. memr temp, 8 1 4
 end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. 13!:8[3 [ oleerrno=: hr end.
 VariantClear <<temp
 msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
-  pdispidNamed memw dispparams, SZI, 1, 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+  pdispidNamed memw dispparams, SZI, 1 4
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4 2  
 end.
 if. S_OK~: hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
 msk freedispparms dispparams
@@ -1145,7 +1219,7 @@ oleputref=: olesetref=: DISPATCH_PROPERTYPUTREF oleinvoke
 oleid=: 3 : 0
 oleerrno=: S_OK
 if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype y do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
-'' iuAddRef~ d=. {. memr y, 8, 1, 4
+'' iuAddRef~ d=. {. memr y, 8 1 4
 d
 )
 olerelease=: 3 : 0
@@ -1155,19 +1229,65 @@ oleqer=: 3 : 0
 olecomerrmsg oleerrno
 )
 oletype=: 3 : 0
-vt=. {. _1&ic memr y, 0, 2, 2
+vt=. {. _1&ic memr y, 0 2 2
 vt0=. vt ((17 b.) (26 b.)) VT_VECTOR (23 b.) VT_ARRAY (23 b.) VT_BYREF
 vt0, 0~: vt (17 b.) VT_VECTOR, VT_ARRAY, VT_BYREF
 )
+
+olebstr=: 3 : 0
+6 u: memr y, 0, (_2&ic memr y, _4 4 2), 2
+)
 olevalue=: 3 : 0
 'vt vector array byref'=. oletype y
-if. byref do. y=. {. memr y, 8, 1, 4 end.
-select. vt
-case. VT_I4 do. {. _2&ic memr y, 8, 4, 2
-case. VT_R4 do. {. _1&fc memr y, 8, 4, 2
-case. VT_R8 do. {. memr y, 8, 1, 8
-case. VT_BSTR do. 6 u: memr b, 0, (_2&ic memr b, _4 4 2), 2 [ b=. {.memr y, 8 1 4
-case. do. {. memr y, 8, 1, 4
+assert. 0=vector                         
+if. byref do. y=. {. memr y, 8 1 4 end.
+if. array do.
+  shape=. 0$0
+  sa=. {. memr y, 8 1 4
+  if. 0= nd=. SafeArrayGetDim sa do. 0$0 return. end.
+  for_i. >:i.nd do.    
+    u=. ,2-2  
+    b=. ,2-2
+    if. S_OK ~: hr=. SafeArrayGetLBound sa ; i ; b do. shape=. 0 break. end.
+    if. S_OK ~: hr=. SafeArrayGetUBound sa ; i ; u do. shape=. 0 break. end.
+    shape=. shape,~ >:u-b      
+  end.
+  if. (0=#shape) +. 0 e. shape do. shape $ 0 return. end.
+  vt1=. ,2-2
+  if. S_OK ~: hr=. SafeArrayGetVartype sa ; vt1 do. shape $ 0 return. end.
+  vt0=. ({.vt1) ((17 b.) (26 b.)) VT_VECTOR (23 b.) VT_ARRAY (23 b.) VT_BYREF
+  assert. vt0=vt
+  p=. ,2-2    
+  if. S_OK= hr=. SafeArrayAccessData sa ; p do.
+    select. vt0
+    case. VT_UI1;VT_I1 do. |: (|.shape) $ a.i. memr p, 8, (*/shape), 2
+    case. VT_BOOL do. |: (|.shape) $ 0 ~: _1&ic memr p, 8, (2**/shape), 2
+    case. VT_UI2;VT_I2 do. |: (|.shape) $ _1&ic memr p, 8, (2**/shape), 2
+    case. VT_UI4;VT_I4;VT_EMPTY do. |: (|.shape) $ _2&ic memr p, 8, (4**/shape), 2
+    case. VT_UI8;VT_I8 do. |: (|.shape) $ (IF64{_2 _3)&ic memr p, 8, (SZI**/shape), 2
+    case. VT_R4 do. |: (|.shape) $ _1&fc memr p, 8, (4**/shape), 2
+    case. VT_R8 do. |: (|.shape) $ memr p, 8, (*/shape), 8
+    case. VT_BSTR do. |: (|.shape) $ <@olestr"0 memr p, 8, (*/shape), 4
+    case. VT_VARIANT do. |: (|.shape) $ <@olevalue"0 ({.p)+16*i.(*/shape)
+    case. do. |: (|.shape) $ memr p, 8, (*/shape), 4
+    end.
+    if. S_OK~: hr=. SafeArrayUnaccessData sa do. end.
+  else.
+    shape $ 0
+  end.
+else.
+  select. vt
+  case. VT_UI1;VT_I1 do. {. a.i. memr y, 8 1 2
+  case. VT_BOOL do. {. 0 ~: _1&ic memr y, 8 2 2
+  case. VT_UI2;VT_I2 do. {. _1&ic memr y, 8 2 2
+  case. VT_UI4;VT_I4;VT_EMPTY do. {. _2&ic memr y, 8 4 2
+  case. VT_UI8;VT_I8 do. {. (IF64{_2 _3)&ic memr y, 8, SZI, 2
+  case. VT_R4 do. {. _1&fc memr y, 8 4 2
+  case. VT_R8 do. {. memr y, 8 1 8
+  case. VT_BSTR do. olebstr {. memr y, 8 1 4
+  case. VT_VARIANT do. olevalue {. memr y, 8 1 4
+  case. do. {. memr y, 8 1 4
+  end.
 end.
 )
 
@@ -1201,7 +1321,7 @@ elseif. VT_VARIANT~:x do.
   end.
 end.
 if. 0=#$y do. y=. ,y end.
-if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
+if. 0= sa=. SafeArrayCreate x ; (#$y) ; , (|.$y),.0 do.
   0 return.
 end.
 if. 0~: #,y do.
@@ -1210,12 +1330,26 @@ if. 0~: #,y do.
     SafeArrayDestroy sa
     0 return.
   end.
-  if. VT_I4 = x do.
+  if. (VT_UI1,VT_I1) e.~ x do.
+    (a.{~ <. ,|:y) memw p, 0, (#,y), 2
+  elseif. VT_BOOL = x do.
+    (1 ic 0 _1{~ 0~: <. ,|:y) memw p, 0, (2*#,y), 2
+  elseif. (VT_UI2,VT_I2) e.~ x do.
+    (1 ic <. ,|:y) memw p, 0, (2*#,y), 2
+  elseif. (VT_UI4,VT_I4,VT_EMPTY) e.~ x do.
     if. IF64 do.
-      (2 ic (2-2) + ,|:y) memw p, 0, (4*#,y), 2
+      (2 ic <. ,|:y) memw p, 0, (4*#,y), 2
     else.
-      ((2-2) + ,|:y) memw p, 0, (#,y), 4
+      ((2-2) + <. ,|:y) memw p, 0, (#,y), 4
     end.
+  elseif. (VT_UI8,VT_I8) e.~ x do.
+    if. IF64 do.
+      ((2-2) + <. ,|:y) memw p, 0, (#,y), 4
+    else.
+      (2 ic , 0 ,.~ <. ,|:y) memw p, 0, (8*#,y), 2
+    end.
+  elseif. VT_R4 = x do.
+    (1 fc ,|: _&<. y) memw p, 0, (4*#,y), 2
   elseif. VT_R8 = x do.
     (,|: _&<. y) memw p, 0, (#,y), 8
   elseif. VT_BSTR = x do.
@@ -1269,8 +1403,8 @@ if. 0~: #,y do.
   end.
 end.
 arr=. olevaralloc ''
-(1 ic VT_ARRAY+x) memw arr, 0, 2, 2
-sa memw arr, 8, 1, 4
+(1 ic VT_ARRAY+x) memw arr, 0 2 2
+sa memw arr, 8 1 4
 arr
 )
 
