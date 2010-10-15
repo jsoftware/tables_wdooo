@@ -10,7 +10,7 @@ This program can work in jconsole but not on linux.
 Contributed by Bill Lam
 )
 
-VERSION=: '1.0.7'
+VERSION=: '1.0.8'
 
 RELEASE=: 'j602 j701'
 
