@@ -817,7 +817,7 @@ coinsert 'olecomerrorh'
 coinsert 'olegpcall'
 coinsert 'olegpole32'
 
-IFWINEBUG=: 0 -.@-: 2!:5'_'
+IFWINEBUG=: 0 [ 0 -.@-: 2!:5'_'     
 
 VT_EMPTY=: 0
 VT_NULL=: 1

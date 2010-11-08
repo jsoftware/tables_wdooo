@@ -2,3 +2,6 @@ tables/wdooo - change history
 
 == 1.0.0 ==
  * publish in JAL
+
+== 1.0.1/9 ==
+ * J701 beta release
