@@ -247,7 +247,7 @@ git iuRelease ''
 {.p
 )
 
-CoInitializeEx^:IFCONSOLE 0;COINIT_APARTMENTTHREADED
+CoInitializeEx 0;COINIT_APARTMENTTHREADED
 coclass 'olecomerrorh'
 
 DFH=: 3 : 0
@@ -817,8 +817,6 @@ coinsert 'olecomerrorh'
 coinsert 'olegpcall'
 coinsert 'olegpole32'
 
-IFWINEBUG=: 0 [ 0 -.@-: 2!:5'_'     
-
 VT_EMPTY=: 0
 VT_NULL=: 1
 VT_I2=: 2
@@ -1256,7 +1254,6 @@ if. array do.
     if. S_OK ~: hr=. SafeArrayGetUBound sa ; i ; u do. shape=. 0 break. end.
     shape=. shape, >:u-b
   end.
-  shape=. |.^:IFWINEBUG shape      
   if. (0=#shape) +. 0 e. shape do. shape $ 0 return. end.
   vt1=. ,2-2
   if. S_OK ~: hr=. SafeArrayGetVartype sa ; vt1 do. shape $ 0 return. end.
@@ -1346,7 +1343,7 @@ elseif. VT_VARIANT~:x do.
   end.
 end.
 if. 0=#$y do. y=. ,y end.
-if. 0= sa=. SafeArrayCreate x ; (#$y) ; , (|.^:IFWINEBUG $y),.0 do.
+if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
   0 return.
 end.
 if. 0~: #,y do.
