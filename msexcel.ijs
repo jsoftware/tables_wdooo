@@ -1,14 +1,13 @@
 NB. Excel using vtable oleautomation
 NB. only works if ms office excel has been installed
 
-'require'~'tables/wdooo'
+require 'tables/wdooo'
 
 cocurrent 'base'
 
 NB. MS Office Excel
 test=: 3 : 0
-PATH=. jpath '~addons/tables/wdooo'
-f1=. PATH, '/test1.xls'
+(1!:1 <jpath '~addons/tables/wdooo/test1.xls') 1!:2 <f1=. jpath '~temp/test1.xls'
 smoutput f1
 p=. '' conew 'wdooo'
 try.
