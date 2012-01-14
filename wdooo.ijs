@@ -1,5 +1,5 @@
 'require'~'dll'
-symdat_z_=: 3 : 0   
+symdat_z_=: 3 : 0
 had=. {.memr y,(IF64{4 8),1,JPTR
 had+{.memr had,0,1,JINT
 )
@@ -107,7 +107,7 @@ guid
 )
 
 h=: ([: ;:^:_1"1 [: <"1 hfd)@(([: , _4 (_2&(3!:4))@|.\ ])^:(2=3!:0))
-si=: I.@E.~   
+si=: I.@E.~
 us=: 0&(3!:4)
 mi=: [: {.@memr ,&(0 1,JINT)
 mc=: ,&0@] memr@, ,&JCHAR@[
@@ -117,8 +117,8 @@ and=: 17 b.
 
 GetStr=: 3 : 0
 if. 0=y do. ''return. end.
-len=. mi _4+y    
-val=. len mc y   
+len=. mi _4+y
+val=. len mc y
 8 u: 6 u: val
 )
 
@@ -201,22 +201,22 @@ r
 FuncDesc=: 4 : 0"0
 herr x itGetFuncDesc y ; pfd=. ,_2
 mid=. 0 mI pfd
-if. c=. (FUNCDESC si 'Cp') mS pfd do.    
-  p=. (FUNCDESC si 'Parm') mI pfd        
+if. c=. (FUNCDESC si 'Cp') mS pfd do.
+  p=. (FUNCDESC si 'Parm') mI pfd
   r=. x <@TypeDesc p+(#ELEMDESC)*i.c
 else. r=. '' end.
-r=. r,~<x TypeDesc {.(FUNCDESC si 'Lptd') + pfd  
+r=. r,~<x TypeDesc {.(FUNCDESC si 'Lptd') + pfd
 herr x itReleaseFuncDesc {.pfd
 
 res=. (c+1)#_1
 herr x itGetNames mid ; res ; (#res) ; ,_1
 res=. 0 (I.res=_1)}res
-r (, ' '&,)&.> <@GetStrSafeFree"0 res    
+r (, ' '&,)&.> <@GetStrSafeFree"0 res
 )
 
 GetDoc=: 4 : 0"0
 herr x itGetDocumentation y ; (name=. ,_2) ; (doc=. ,_2) ; 0 ; 0
-<@GetStrSafeFree"0 name,doc           
+<@GetStrSafeFree"0 name,doc
 )
 
 FuncDoc=: 4 : 0"0
@@ -378,7 +378,7 @@ SZI=: IF64{4 8
 DISPID_PROPERTYPUT=: _3
 dispidNamed=: 2&ic DISPID_PROPERTYPUT
 pdispidNamed=: symdat@symget < 'dispidNamed'
-iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.  
+iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
 DISPATCH_METHOD=: 1
 DISPATCH_PROPERTYGET=: 2
 DISPATCH_PROPERTYPUT=: 4
@@ -434,8 +434,8 @@ vargs
 makedispparms=: 4 : 0
 dispparams=. mema SZI+SZI+4+4
 ((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
-(x makevariant&|. y) memw dispparams, 0, 1, 4       
-(#y) memw dispparams, (2*SZI), 1, 4                 
+(x makevariant&|. y) memw dispparams, 0, 1, 4
+(#y) memw dispparams, (2*SZI), 1, 4
 dispparams
 )
 
@@ -450,7 +450,7 @@ end.
 if. a do.
   assert. c = #msk
   if. 1 e. msk do.
-    VariantClear@<@<"0 a+msk#16*i.-c     
+    VariantClear@<@<"0 a+msk#16*i.-c
   end.
   memf a
 end.
@@ -489,7 +489,7 @@ msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
   pdispidNamed memw dispparams, SZI, 1, 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2
 end.
 hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0
 msk freedispparms dispparams
@@ -593,7 +593,7 @@ if. 0~: obj=. 'com.sun.star.lang.Locale' OOoCreateStruct disp do.
       end.
     else.
       whilst. 0 do.
-        coAddRef obj   
+        coAddRef obj
         if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN, VT_BOOL) (DISPATCH_METHOD OOoinvoke) nf ; 'queryKey' ; cotmp ; fmt ; obj ; 1 do. break. end.
         fmtid=. olevalue cotmp
         if. _1=fmtid do.
@@ -646,7 +646,7 @@ args=. 2}.y
 oleerrno=: S_OK
 if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
 newdisp=. 0
-if. disp=temp do.  
+if. disp=temp do.
   if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
   newdisp=. 1
   '' iuAddRef~ disp=. {. memr temp, 8, 1, 4
@@ -657,7 +657,7 @@ msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
   pdispidNamed memw dispparams, SZI, 1, 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2
 end.
 if. S_OK~: hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
 msk freedispparms dispparams
@@ -744,7 +744,7 @@ if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
   0 return.
 end.
 if. 0~: #,y do.
-  p=. ,2-2    
+  p=. ,2-2
   if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
     SafeArrayDestroy sa
     0 return.
@@ -761,7 +761,7 @@ if. 0~: #,y do.
     (,|:y) memw p, 0, (#,y), 4
   elseif. VT_VARIANT = x do.
     if. 2>#@$y do. y=. ,:y end.
-    n1=. {.@$y                       
+    n1=. {.@$y
     for_i. i.{.@$ y do.
       for_j. i.{:@$ y do.
         if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
@@ -800,7 +800,7 @@ if. 0~: #,y do.
   elseif. VT_UNKNOWN = x do.
     (,|:y) memw p, 0, (#,y), 4
   elseif. do.
-    assert. 0   
+    assert. 0
   end.
   if. S_OK~: hr=. SafeArrayUnaccessData sa do.
     SafeArrayDestroy sa
@@ -896,7 +896,7 @@ SZI=: IF64{4 8
 DISPID_PROPERTYPUT=: _3
 dispidNamed=: 2&ic DISPID_PROPERTYPUT
 pdispidNamed=: symdat@symget < 'dispidNamed'
-iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.  
+iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
 DISPATCH_METHOD=: 1
 DISPATCH_PROPERTYGET=: 2
 DISPATCH_PROPERTYPUT=: 4
@@ -946,7 +946,7 @@ for_i. i.#y do.
         s memw arr, 8 1 4
       else.
         s memw arr, 8 1 4
-        ((s<0){0 _1) memw arr, 12 1 4   
+        ((s<0){0 _1) memw arr, 12 1 4
       end.
     case. VT_R4 do.
       (1 fc s) memw arr, 8 4 2
@@ -971,8 +971,8 @@ vargs
 makedispparms=: 4 : 0
 dispparams=. mema SZI+SZI+4+4
 ((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
-(x makevariant&|. y) memw dispparams, 0 1 4        
-(#y) memw dispparams, (2*SZI), 1 4                 
+(x makevariant&|. y) memw dispparams, 0 1 4
+(#y) memw dispparams, (2*SZI), 1 4
 dispparams
 )
 
@@ -987,7 +987,7 @@ end.
 if. a do.
   assert. c = #msk
   if. 1 e. msk do.
-    VariantClear@<@<"0 a+msk#16*i.-c     
+    VariantClear@<@<"0 a+msk#16*i.-c
   end.
   memf a
 end.
@@ -1026,7 +1026,7 @@ msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
   pdispidNamed memw dispparams, SZI, 1, 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2  
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2
 end.
 hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0
 msk freedispparms dispparams
@@ -1130,7 +1130,7 @@ if. 0~: obj=. 'com.sun.star.lang.Locale' OOoCreateStruct disp do.
       end.
     else.
       whilst. 0 do.
-        coAddRef obj   
+        coAddRef obj
         if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN, VT_BOOL) (DISPATCH_METHOD OOoinvoke) nf ; 'queryKey' ; cotmp ; fmt ; obj ; 1 do. break. end.
         fmtid=. olevalue cotmp
         if. _1=fmtid do.
@@ -1183,7 +1183,7 @@ args=. 2}.y
 oleerrno=: S_OK
 if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
 newdisp=. 0
-if. disp=temp do.  
+if. disp=temp do.
   if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
   newdisp=. 1
   '' iuAddRef~ disp=. {. memr temp, 8 1 4
@@ -1194,7 +1194,7 @@ msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
   pdispidNamed memw dispparams, SZI, 1 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4 2  
+  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4 2
 end.
 if. S_OK~: hr=. disp idInvoke id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
 msk freedispparms dispparams
@@ -1241,14 +1241,14 @@ olebstr=: 3 : 0
 )
 olevalue=: 3 : 0
 'vt vector array byref'=. oletype y
-assert. 0=vector                         
+assert. 0=vector
 if. byref do. y=. {. memr y, 8 1 4 end.
 if. array do.
   shape=. 0$0
   sa=. {. memr y, 8 1 4
   if. 0= nd=. SafeArrayGetDim sa do. 0$0 return. end.
-  for_i. >:i.nd do.    
-    u=. ,2-2  
+  for_i. >:i.nd do.
+    u=. ,2-2
     b=. ,2-2
     if. S_OK ~: hr=. SafeArrayGetLBound sa ; i ; b do. shape=. 0 break. end.
     if. S_OK ~: hr=. SafeArrayGetUBound sa ; i ; u do. shape=. 0 break. end.
@@ -1259,7 +1259,7 @@ if. array do.
   if. S_OK ~: hr=. SafeArrayGetVartype sa ; vt1 do. shape $ 0 return. end.
   vt0=. ({.vt1) ((17 b.) (26 b.)) VT_VECTOR (23 b.) VT_ARRAY (23 b.) VT_BYREF
   assert. vt0=vt
-  p=. ,2-2    
+  p=. ,2-2
   if. S_OK= hr=. SafeArrayAccessData sa ; p do.
     select. vt0
     case. VT_UI1;VT_I1 do. |: (|.shape) $ a.i. memr p, 0, (*/shape), 2
@@ -1347,7 +1347,7 @@ if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
   0 return.
 end.
 if. 0~: #,y do.
-  p=. ,2-2    
+  p=. ,2-2
   if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
     SafeArrayDestroy sa
     0 return.
@@ -1368,7 +1368,7 @@ if. 0~: #,y do.
     if. IF64 do.
       ((2-2) + <. ,|:y) memw p, 0, (#,y), 4
     else.
-      (2 ic , (] , (0 _1 {~ 0&>))"0 <. ,|:y) memw p, 0, (8*#,y), 2   
+      (2 ic , (] , (0 _1 {~ 0&>))"0 <. ,|:y) memw p, 0, (8*#,y), 2
     end.
   elseif. VT_R4 = x do.
     (1 fc ,|: _&<. y) memw p, 0, (4*#,y), 2
@@ -1378,7 +1378,7 @@ if. 0~: #,y do.
     (,|:y) memw p, 0, (#,y), 4
   elseif. VT_VARIANT = x do.
     if. 2>#@$y do. y=. ,:y end.
-    n1=. {.@$y                       
+    n1=. {.@$y
     for_i. i.{.@$ y do.
       for_j. i.{:@$ y do.
         if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
@@ -1417,7 +1417,7 @@ if. 0~: #,y do.
   elseif. VT_UNKNOWN = x do.
     (,|:y) memw p, 0, (#,y), 4
   elseif. do.
-    assert. 0   
+    assert. 0
   end.
   if. S_OK~: hr=. SafeArrayUnaccessData sa do.
     SafeArrayDestroy sa
