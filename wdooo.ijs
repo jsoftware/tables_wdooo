@@ -247,7 +247,7 @@ git iuRelease ''
 {.p
 )
 
-CoInitializeEx 0;COINIT_APARTMENTTHREADED
+CoInitializeEx^:IFWIN 0;COINIT_APARTMENTTHREADED
 coclass 'olecomerrorh'
 
 DFH=: 3 : 0
@@ -1163,6 +1163,7 @@ oleerrno=: S_OK
 init=: 0
 
 create=: 3 : 0
+assert. IFWIN
 oleerrno=: S_OK
 init=: 0
 )

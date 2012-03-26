@@ -8,3 +8,6 @@ tables/wdooo - change history
 
 == 1.0.11 ==
  * copy test1.xls to ~temp
+
+== 1.0.12 ==
+ * prevent error when loaded by Linux
