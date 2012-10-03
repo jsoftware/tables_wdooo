@@ -1,8 +1,4 @@
 'require'~'dll'
-symdat_z_=: 3 : 0
-had=. {.memr y,(IF64{4 8),1,JPTR
-had+{.memr had,0,1,JINT
-)
 coclass 'olegpcall'
 acall=: 2 : '(''0 '',(":m),'' > '',n)&(15!:0)'
 icall=: 2 : '(''1 '',(":m),'' > '',n)&(15!:0)'
@@ -377,7 +373,7 @@ SZI=: IF64{4 8
 
 DISPID_PROPERTYPUT=: _3
 dispidNamed=: 2&ic DISPID_PROPERTYPUT
-pdispidNamed=: symdat@symget < 'dispidNamed'
+pdispidNamed=: 15!:14 < 'dispidNamed'
 iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
 DISPATCH_METHOD=: 1
 DISPATCH_PROPERTYGET=: 2
@@ -387,7 +383,7 @@ DISPATCH_PROPERTYPUTREF=: 8
 dispid=: 4 : 0
 assert. x~:0
 y=. uucp y
-nm=. ,symdat symget <,'y'
+nm=. ,15!:14 <,'y'
 hr=. x idGetIDsOfNames GUID_NULL;nm;1;0;r=. ,_1
 hr, r
 )
@@ -895,7 +891,7 @@ SZI=: IF64{4 8
 
 DISPID_PROPERTYPUT=: _3
 dispidNamed=: 2&ic DISPID_PROPERTYPUT
-pdispidNamed=: symdat@symget < 'dispidNamed'
+pdispidNamed=: 15!:14 < 'dispidNamed'
 iid_idisp=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
 DISPATCH_METHOD=: 1
 DISPATCH_PROPERTYGET=: 2
@@ -905,7 +901,7 @@ DISPATCH_PROPERTYPUTREF=: 8
 dispid=: 4 : 0
 assert. x~:0
 y=. uucp y
-nm=. ,symdat symget <,'y'
+nm=. ,15!:14 <,'y'
 hr=. x idGetIDsOfNames GUID_NULL;nm;1;0;r=. ,_1
 hr, r
 )
