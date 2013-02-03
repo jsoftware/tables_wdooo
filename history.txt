@@ -11,3 +11,6 @@ tables/wdooo - change history
 
 == 1.0.12 ==
  * prevent error when loaded by Linux
+
+== 1.0.13 ==
+ * j801
