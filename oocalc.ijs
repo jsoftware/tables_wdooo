@@ -1,7 +1,7 @@
 NB. example on openoffice calc
 NB. only works if openoffice has been installed
 
-'require'~'tables/wdooo'
+require 'tables/wdooo'
 
 cocurrent 'base'
 
@@ -44,7 +44,9 @@ NB. clean up
   olerelease__p desktop
   smoutput 'success'
 catch.
+  smoutput 'error'
   smoutput oleqer__p ''
+  (olemethod__p ::0:) desktop ; 'terminate'
 end.
 destroy__p ''
 )

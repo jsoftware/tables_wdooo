@@ -1,16 +1,16 @@
 NB. wdooo manifest
 
-CAPTION=: 'OpenOffice.org via ole automation'
+CAPTION=: 'ole automation client'
 
 DESCRIPTION=: 0 : 0
-Control OpenOffice.org and MS Excel via ole automation using a syntax similar to wd.
+ole automation client.
 
-This program can work in jconsole but not on linux.
+This program only works on windows.
 
 Contributed by Bill Lam
 )
 
-VERSION=: '1.0.13'
+VERSION=: '1.0.14'
 
 RELEASE=: 'j602 j701 j801'
 

@@ -14,3 +14,6 @@ tables/wdooo - change history
 
 == 1.0.13 ==
  * j801
+
+== 1.0.14 ==
+ * 64-bit fix

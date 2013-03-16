@@ -1,6 +1,6 @@
 NB. J using vtable oleautomation
 
-'require'~'tables/wdooo'
+require 'tables/wdooo'
 
 cocurrent 'base'
 
@@ -30,10 +30,10 @@ NB. get
   olevarfree__p c
 NB. cleanup
   olemethod__p base ; 'Quit'
-  (oledestroy__p ::0:) ''
   smoutput 'success'
 catch.
   smoutput oleqer__p ''
+  (olemethod__p ::0:) base ; 'Quit'
 end.
 destroy__p ''
 )
