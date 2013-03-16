@@ -245,7 +245,6 @@ git iuRelease ''
 
 CoInitializeEx^:IFWIN 0;COINIT_APARTMENTTHREADED
 coclass 'olecomerrorh'
-
 DFH=: 3 : 0
 if. '0x'-:2{.y=. }:^:('L'={:y) y do.
   d=. 0
@@ -255,7 +254,10 @@ if. '0x'-:2{.y=. }:^:('L'={:y) y do.
 else.
   d=. 0&". y
 end.
-if. IF64 *. d > <:2^31 do. d=. <. d - 2^32 end.
+if. IF64 *. d > 2147483647 do.
+  d=. d-2^32
+end.
+<. d
 )
 
 cheaderconst=: ''&$: : (4 : 0)
