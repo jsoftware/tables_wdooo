@@ -17,3 +17,6 @@ tables/wdooo - change history
 
 == 1.0.14 ==
  * 64-bit fix
+
+== 1.0.15 ==
+ * typo in test
