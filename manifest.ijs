@@ -12,7 +12,7 @@ Contributed by Bill Lam
 
 VERSION=: '1.0.15'
 
-RELEASE=: 'j602 j701 j801'
+RELEASE=: 'j802'
 
 PLATFORMS=: 'win'
 
