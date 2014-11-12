@@ -60,7 +60,7 @@ CTX=: CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
 iuQueryInterface=: IU_QueryInterface icall 'i x *c *x' @ ;
 iuAddRef=: IU_AddRef icall 'i x' @ [
 iuRelease=: IU_Release icall 'i x' @ [
-idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x *c *w i i *i' @ ;
+idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x *c *x i i *i' @ ;
 idGetTypeInfo=: ID_GetTypeInfo icall 'i x x x *x' @ ;
 idInvoke=: ID_Invoke icall 'i x x *c x s *x *x x x' @ ;
 itGetTypeAttr=: IT_GetTypeAttr icall 'i x *x' @ ;
@@ -442,7 +442,9 @@ DISPATCH_PROPERTYPUTREF=: 8
 
 dispid=: 4 : 0
 assert. x~:0
-hr=. x idGetIDsOfNames GUID_NULL;(uucp y);1;0;r=. ,_1
+y=. uucp y
+nm=. ,15!:14 <,'y'
+hr=. x idGetIDsOfNames GUID_NULL;nm;1;0;r=. ,_1
 assert. (0~:hr)+.r>:0
 hr, r
 )
