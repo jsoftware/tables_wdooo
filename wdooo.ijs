@@ -60,7 +60,7 @@ CTX=: CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
 iuQueryInterface=: IU_QueryInterface icall 'i x *c *x' @ ;
 iuAddRef=: IU_AddRef icall 'i x' @ [
 iuRelease=: IU_Release icall 'i x' @ [
-idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x *c *x x x *x' @ ;
+idGetIDsOfNames=: ID_GetIDsOfNames icall 'i x *c *x i i *i' @ ;
 idGetTypeInfo=: ID_GetTypeInfo icall 'i x x x *x' @ ;
 idInvoke=: ID_Invoke icall 'i x x *c x s *x *x x x' @ ;
 itGetTypeAttr=: IT_GetTypeAttr icall 'i x *x' @ ;
@@ -539,8 +539,14 @@ f
 )
 olevarfree=: 3 : 0
 if. y do.
-  memf y [ VariantClear <<y
+  memf y [ VariantClear^:(-.win7x64) <<y
 end.
+)
+
+win7x64=: 3 : 0''
+if. IFWIN *: IF64 do. 0 return. end.
+'w98 bld hi lo'=. 2 32768 256 256 #: 'kernel32 GetVersion > i' 15!:0 ''
+(lo>5)
 )
 coclass 'oleooo'
 coinsert 'oleutil'
