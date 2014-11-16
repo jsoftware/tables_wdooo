@@ -16,7 +16,7 @@ CoGetObject=: 'ole32 CoGetObject      > i *w i *c *x'&cd
 VariantClear=: 'oleaut32 VariantClear > i *x'&cd
 VariantChangeType=: 'oleaut32 VariantChangeType > i *x *x s s'&cd
 SysFreeString=: 'oleaut32 SysFreeString > i x'&cd
-SysAllocStringLen=: 'oleaut32 SysAllocStringLen > i *w i'&cd
+SysAllocStringLen=: 'oleaut32 SysAllocStringLen > x *w i'&cd
 CoGetActiveObject=: 'oleaut32 GetActiveObject     > i *c x *x'&cd
 
 GUID=: 'WWWWXXYYZZZZZZZZ'
@@ -132,7 +132,7 @@ VariantStr=: GetStr@(2&{)
 
 BoolVar=: 3 : 'VT_BOOL,0,(_1 0{~0-:{.y),0'
 IntVar=: 3 : 'VT_I4,0,({.y),0'
-PtrVar=: 3 : 'VT_UNKNOWN,0,({.y),0'
+PtrVar=: 3 : 'VT_DISPATCH,0,({.y),0'
 FloatVar=: 3 : 'VT_R8,0,_2(3!:4)2(3!:5){.y'
 StrVar=: 3 : 'VT_BSTR,0,(AllocStr y),0'
 EmptyVar=: 3 : '({.y,VT_EMPTY),0,0,_1'
@@ -539,7 +539,7 @@ f
 )
 olevarfree=: 3 : 0
 if. y do.
-  memf y [ VariantClear^:(-.win7x64) <<y
+  memf y [ VariantClear <<y
 end.
 )
 
@@ -563,9 +563,9 @@ OOoinvoke=: 1 : 0
 'disp name temp'=. 3{. y
 args=. 3}.y
 oleerrno=: S_OK
-if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_DISPATCH) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. hr return. end.
-if. temp do. VariantClear <<temp end.
+if. temp do. VariantInit <<temp [ VariantClear <<temp end.
 msk=. 32&~:@(3!:0)&> args
 dispparams=. x makedispparms args
 if. m=DISPATCH_PROPERTYPUT do.
@@ -612,7 +612,7 @@ OOoPropertyValue=: 4 : 0
 disp=. y
 'name value vts'=. 3{.x, a:
 if. 0=#vts do.
-  vts=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> value=. boxopen value)
+  vts=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_DISPATCH) {~ 2 131072 1 4 8 i. (3!:0&> value=. boxopen value)
 end.
 if. 0~: obj=. 'com.sun.star.beans.PropertyValue' OOoCreateStruct disp do.
   failure=. 1
@@ -668,17 +668,17 @@ if. 0~: obj=. 'com.sun.star.lang.Locale' OOoCreateStruct disp do.
     coAddRef nf=. olevalue cotmp
     if. 1 4 e.~ 3!:0 fmt do.
       whilst. 0 do.
-        if. S_OK&~: hr=. (VT_I4, VT_UNKNOWN) (DISPATCH_METHOD OOoinvoke) nf ; 'getStandardFormat' ; cotmp ; fmt ; obj do. break. end.
+        if. S_OK&~: hr=. (VT_I4, VT_DISPATCH) (DISPATCH_METHOD OOoinvoke) nf ; 'getStandardFormat' ; cotmp ; fmt ; obj do. break. end.
         fmtid=. olevalue cotmp
         failure=. 0
       end.
     else.
       whilst. 0 do.
         coAddRef obj
-        if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN, VT_BOOL) (DISPATCH_METHOD OOoinvoke) nf ; 'queryKey' ; cotmp ; fmt ; obj ; 1 do. break. end.
+        if. S_OK&~: hr=. (VT_BSTR, VT_DISPATCH, VT_BOOL) (DISPATCH_METHOD OOoinvoke) nf ; 'queryKey' ; cotmp ; fmt ; obj ; 1 do. break. end.
         fmtid=. olevalue cotmp
         if. _1=fmtid do.
-          if. S_OK&~: hr=. (VT_BSTR, VT_UNKNOWN) (DISPATCH_METHOD OOoinvoke) nf ; 'addNew' ; cotmp ; fmt ; obj do. break. end.
+          if. S_OK&~: hr=. (VT_BSTR, VT_DISPATCH) (DISPATCH_METHOD OOoinvoke) nf ; 'addNew' ; cotmp ; fmt ; obj do. break. end.
           fmtid=. olevalue cotmp
           failure=. 0
         else.
@@ -2250,7 +2250,7 @@ oleinvoke=: 1 : 0
 'disp name'=. 2{. y
 args=. 2}.y
 oleerrno=: S_OK
-if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_DISPATCH) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
 newdisp=. 0
 if. disp=temp do.
   if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
@@ -2385,8 +2385,8 @@ end.
 olevector=: [ olesafearray ,@]
 olesafearray=: 4 : 0
 if. 0=#$y do. y=. ,y end.
-if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_UNKNOWN) {~ 2 131072 1 4 8 32 i. 3!:0 y end.
-if. (0~:#,y) *. (VT_UNKNOWN=x) *. 1 4 -.@e.~ 3!:0 y do. 0 return. end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_DISPATCH) {~ 2 131072 1 4 8 32 i. 3!:0 y end.
+if. (0~:#,y) *. (VT_DISPATCH=x) *. 1 4 -.@e.~ 3!:0 y do. 0 return. end.
 if. _1=x do.
   if. *./ 2 131072 e.~ t=. , 3!:0 &> y do. x=. VT_BSTR
   elseif. *./ 1 4 e.~ t do. x=. VT_I4 [ y=. ($y) $ ,>y
@@ -2462,7 +2462,7 @@ if. 0~: #,y do.
           end.
         elseif. 32 = te do.
           if. 1 4 e.~ 3!:0 >elm do.
-            (1 ic VT_UNKNOWN) memw p, (szVARIANT*i+n1*j), 2 2
+            (1 ic VT_DISPATCH) memw p, (szVARIANT*i+n1*j), 2 2
             if. IF64 do.
               (2 ic (2-2)+ >elm) memw p, (8+szVARIANT*i+n1*j), 4 2
             else.
@@ -2483,7 +2483,7 @@ if. 0~: #,y do.
         end.
       end.
     end.
-  elseif. VT_UNKNOWN = x do.
+  elseif. (VT_UNKNOWN, VT_DISPATCH) e.~ x do.
     (,|:y) memw p, 0, (#,y), 4
   elseif. do.
     assert. 0

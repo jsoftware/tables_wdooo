@@ -22,8 +22,8 @@ try.
   'base temp'=. olecreate__p 'com.sun.star.ServiceManager'
   olemethod__p base ; 'createInstance' ; 'com.sun.star.frame.Desktop'
   desktop=. oleid__p temp
-  propVals=. VT_UNKNOWN olevector__p ('Hidden' ; 1 ; VT_BOOL) OOoPropertyValue__p base
-  (VT_BSTR, VT_BSTR, VT_I4, VT_ARRAY+VT_UNKNOWN) olemethod__p desktop ; 'loadComponentFromURL' ; f1 ; '_blank' ; 0 ; <<propVals
+  propVals=. VT_DISPATCH olevector__p ('Hidden' ; 1 ; VT_BOOL) OOoPropertyValue__p base
+  (VT_BSTR, VT_BSTR, VT_I4, VT_ARRAY+VT_VARIANT) olemethod__p desktop ; 'loadComponentFromURL' ; f1 ; '_blank' ; 0 ; <<propVals
   olevarfree__p propVals
   doc=. oleid__p temp
   olemethod__p doc ; 'getSheets'
@@ -50,4 +50,3 @@ catch.
 end.
 destroy__p ''
 )
-
