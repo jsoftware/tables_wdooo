@@ -109,10 +109,12 @@ end.
 destroy__p ''
 )
 
+NB. 0-base
 xlcell=: 3 : 0
 'c r'=. y
-c1=. <.c%26 [ c2=. 26|c
-' '-.~(c1{' ABCDEFGHI'), (c2{'ABCDEFGHIJKLMNOPQRSTUVWXYZ'), ": 1+r
+f=. 26&#.
+efn=. 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' {~ }.@(1&, -&.f 1 #~ #)@(f inv)
+(efn 1+c),":1+r
 )
 
 NB. sample output
