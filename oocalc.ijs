@@ -14,7 +14,7 @@ NB. might not coerce 1 to VT_BOOL TRUE so need to specify VT_... as left argumen
 NB. use array argument (discuss later)
 test=: 3 : 0
 (1!:1 <jpath '~addons/tables/wdooo/test1.xls') 1!:2 <f=. jpath '~temp/test1.xls'
-f1=. 'file:///',jpathsep f
+f1=. file2url f
 smoutput f1
 p=. '' conew 'wdooo'
 try.

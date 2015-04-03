@@ -119,7 +119,7 @@ efn=. 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' {~ }.@(1&, -&.f 1 #~ #)@(f inv)
 
 NB. 0-base col1 row1 col2 row2
 xlrange=: 3 : 0
-(2{.y),':',_2{.y)
+(xlcell 2{.y),':',xlcell _2{.y
 )
 
 NB. sample output
