@@ -58,7 +58,7 @@ NB. read date
   smoutput (+&36522) olevalue__p temp
   olerelease__p range
 NB. write number using safearray
-  oleget__p aws ; 'range' ; (xlcell 2 12), ':', (xlcell 5 14)
+  oleget__p aws ; 'range' ; xlrange 2 12 5 14
   range=. oleid__p temp
   sa=. '' olesafearray__p i. 3 4
   oleput__p range ; 'value2' ; <<sa
@@ -68,7 +68,7 @@ NB. read safearray
   smoutput olevalue__p temp
   olerelease__p range
 NB. write string using safearray
-  oleget__p aws ; 'range' ; (xlcell 2 22), ':', (xlcell 5 24)
+  oleget__p aws ; 'range' ; xlrange 2 22 5 24
   range=. oleid__p temp
   oleput__p range ; 'numberformat' ; '@'
   sa=. '' olesafearray__p 3 4$'cat';'dog  ';'123'   NB. trailing blanks
@@ -79,7 +79,7 @@ NB. read safearray
   smoutput olevalue__p temp
   olerelease__p range
 NB. write box using safearray of variant
-  oleget__p aws ; 'range' ; (xlcell 2 32), ':', (xlcell 5 34)
+  oleget__p aws ; 'range' ; xlrange 2 32 5 34
   range=. oleid__p temp
   sa=. '' olesafearray__p 3 4$'cat';123.45;'tiger'
   oleput__p range ; 'value2' ; <<sa
@@ -109,12 +109,17 @@ end.
 destroy__p ''
 )
 
-NB. 0-base
+NB. 0-base col row
 xlcell=: 3 : 0
 'c r'=. y
 f=. 26&#.
 efn=. 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' {~ }.@(1&, -&.f 1 #~ #)@(f inv)
 (efn 1+c),":1+r
+)
+
+NB. 0-base col1 row1 col2 row2
+xlrange=: 3 : 0
+(2{.y),':',_2{.y)
 )
 
 NB. sample output

@@ -1,11 +1,11 @@
-NB. example on openoffice calc
-NB. only works if openoffice has been installed
+NB. example on openoffice/libreoffice calc
+NB. only works if openoffice/libreoffice has been installed
 
 require 'tables/wdooo'
 
 cocurrent 'base'
 
-NB. OpenOffice.org calc
+NB. OpenOffice.org/libreoffice calc
 NB. some differences from VBA
 NB. cell position is (col,row) and 0-base
 NB. usually use olemethod instead of oleget/oleset
@@ -14,8 +14,7 @@ NB. might not coerce 1 to VT_BOOL TRUE so need to specify VT_... as left argumen
 NB. use array argument (discuss later)
 test=: 3 : 0
 (1!:1 <jpath '~addons/tables/wdooo/test1.xls') 1!:2 <f=. jpath '~temp/test1.xls'
-PATH=. '/'&(('\' I.@:= ])}) f
-f1=. 'file:///', PATH
+f1=. 'file:///',jpathsep f
 smoutput f1
 p=. '' conew 'wdooo'
 try.
@@ -24,7 +23,8 @@ try.
   desktop=. oleid__p temp
   propVals=. VT_UNKNOWN olevector__p ('Hidden' ; 1 ; VT_BOOL) OOoPropertyValue__p base
   (VT_BSTR, VT_BSTR, VT_I4, VT_ARRAY+VT_UNKNOWN) olemethod__p desktop ; 'loadComponentFromURL' ; f1 ; '_blank' ; 0 ; <<propVals
-NB.  olevarfree__p propVals
+NB. no need to run "olevarfree__p propVals"
+NB. propVals is passed with VT_BYREF so that the callee will free propVals
   doc=. oleid__p temp
   olemethod__p doc ; 'getSheets'
   olemethod__p temp ; 'getByIndex' ; 0

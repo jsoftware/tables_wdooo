@@ -542,12 +542,6 @@ if. y do.
   memf y [ VariantClear <<y
 end.
 )
-
-win7x64=: 3 : 0''
-if. IFWIN *: IF64 do. 0 return. end.
-'w98 bld hi lo'=. 2 32768 256 256 #: 'kernel32 GetVersion > i' 15!:0 ''
-(lo>5)
-)
 coclass 'oleooo'
 coinsert 'oleutil'
 ((<'OOoNumberFormat_') ,&.> ;:'DEFINED DATE TIME CURRENCY NUMBER SCIENTIFIC FRACTION PERCENT TEXT DATETIME LOGICAL UNDEFINED')=: <. 2^i.12
