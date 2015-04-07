@@ -2105,10 +2105,11 @@ if. array do.
   p=. ,2-2
   if. S_OK= hr=. SafeArrayAccessData sa ; p do.
     select. vt0
+    case. VT_EMPTY do. |: (|.shape) $ <''
     case. VT_UI1;VT_I1 do. |: (|.shape) $ a.i. memr p, 0, (*/shape), 2
     case. VT_BOOL do. |: (|.shape) $ 0 ~: _1&ic memr p, 0, (2**/shape), 2
     case. VT_UI2;VT_I2 do. |: (|.shape) $ _1&ic memr p, 0, (2**/shape), 2
-    case. VT_UI4;VT_I4;VT_EMPTY do.
+    case. VT_UI4;VT_I4 do.
       if. IF64 do.
         |: (|.shape) $ _2&ic memr p, 0, (4**/shape), 2
       else.
@@ -2132,10 +2133,11 @@ if. array do.
   end.
 else.
   select. vt
+  case. VT_EMPTY do. ''
   case. VT_UI1;VT_I1 do. {. a.i. memr y, 8 1 2
   case. VT_BOOL do. {. 0 ~: _1&ic memr y, 8 2 2
   case. VT_UI2;VT_I2 do. {. _1&ic memr y, 8 2 2
-  case. VT_UI4;VT_I4;VT_EMPTY do.
+  case. VT_UI4;VT_I4 do.
     if. IF64 do.
       {. _2&ic memr y, 8 4 2
     else.

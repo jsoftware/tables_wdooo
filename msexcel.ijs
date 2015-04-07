@@ -8,7 +8,7 @@ coinsert 'excelh'
 
 NB. MS Office Excel
 test=: 3 : 0
-(1!:1 <jpath '~addons/tables/wdooo/test1.xls') 1!:2 <f1=. jpath '~temp/test1.xls'
+(1!:1 <jpath '~addons/tables/wdooo/test1.xls',(y-.@-:'')#'x') 1!:2 <f1=. jpath '~temp/test1.xls',(y-.@-:'')#'x'
 smoutput f1
 acp=. 'kernel32 GetACP > i'&cd''
 p=. '' conew 'wdooo'

@@ -13,7 +13,7 @@ NB. file names use URL format eg. file:///C:/test.xls (always forward slash)
 NB. might not coerce 1 to VT_BOOL TRUE so need to specify VT_... as left argument
 NB. use array argument (discuss later)
 test=: 3 : 0
-(1!:1 <jpath '~addons/tables/wdooo/test1.xls') 1!:2 <f=. jpath '~temp/test1.xls'
+(1!:1 <jpath '~addons/tables/wdooo/test1.xls',(y-.@-:'')#'x') 1!:2 <f1=. jpath '~temp/test1.xls',(y-.@-:'')#'x'
 f1=. file2url f
 smoutput f1
 p=. '' conew 'wdooo'

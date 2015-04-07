@@ -10,7 +10,7 @@ This program only works on windows.
 Contributed by Bill Lam
 )
 
-VERSION=: '1.0.28'
+VERSION=: '1.0.29'
 
 RELEASE=: 'j802 j803 j804'
 
@@ -24,4 +24,5 @@ jserver.ijs
 msexcel.ijs
 oocalc.ijs
 test1.xls
+test1.xlsx
 )
