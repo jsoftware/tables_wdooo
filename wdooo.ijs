@@ -172,6 +172,7 @@ CLSCTX_ACTIVATE_64_BIT_SERVER=: 16b80000
 CLSCTX_ENABLE_CLOAKING=: 16b100000
 CLSCTX_APPCONTAINER=: 16b400000
 CLSCTX_ACTIVATE_AAA_AS_IU=: 16b800000
+DISPID_PROPERTYPUT=: _3
 
 coclass 'oleutil'
 coinsert 'olecomerrorh'
@@ -200,9 +201,6 @@ CoInitializeEx^:IFWIN 0;2
 S_OK=: 0
 SZI=: IF64{4 8
 
-DISPID_PROPERTYPUT=: _3
-dispidNamed=: 2&ic DISPID_PROPERTYPUT
-pdispidNamed=: 15!:14 < 'dispidNamed'
 GUID_NULL=: 16#{.a.
 iid_iunknown=: 0 0 0 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
 iid_idispatch=: 0 4 2 0 0 0 0 0 192 0 0 0 0 0 0 70{a.
@@ -286,10 +284,17 @@ vargs
 )
 
 makedispparms=: 4 : 0
+'x named'=. 2{.boxopen x
 dispparams=. mema SZI+SZI+4+4
 ((IF64{4 3)#0) memw dispparams, 0, (IF64{4 3), 4
 (x makevariant&|. y) memw dispparams, 0 1 4
-(#y) memw dispparams, (2*SZI), 1 4
+(2&ic #y) memw dispparams, (2*SZI), 4 2
+if. #named do.
+  pdispidNamed=. mema 4*#named
+  (2&ic |.named) memw pdispidNamed, 0, (4*#named) ,2
+  pdispidNamed memw dispparams, SZI, 1 4
+  (2&ic #named) memw dispparams, (IF64{12 20), 4 2
+end.
 dispparams
 )
 
@@ -308,6 +313,7 @@ if. a do.
   end.
   memf a
 end.
+if. b do. memf b end.
 memf y
 )
 olevaralloc=: 3 : 0
@@ -335,16 +341,16 @@ OOoinvoke=: 1 : 0
 :
 'disp name temp'=. 3{. y
 args=. 3}.y
+'x named'=. 2{. x=. boxopen x
 oleerrno=: S_OK
 if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. (m e. DISPATCH_PROPERTYPUT, DISPATCH_PROPERTYPUTREF) > (DISPID_PROPERTYPUT e. named) do.
+  named=. named, DISPID_PROPERTYPUT
+end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. hr return. end.
 if. temp do. VariantClear <<temp end.
-msk=. 32&~:@(3!:0)&> args
-dispparams=. x makedispparms args
-if. m=DISPATCH_PROPERTYPUT do.
-  pdispidNamed memw dispparams, SZI, 1, 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4, 2
-end.
+msk=. -. (x (17 b.) VT_UNKNOWN) +. (x (17 b.) VT_DISPATCH) +. 32&=@(3!:0)&> args
+dispparams=. (x;named) makedispparms args
 hr=. vInvoke disp ; id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0
 msk freedispparms dispparams
 hr
@@ -2006,6 +2012,7 @@ init=: 0
 create=: 3 : 0
 assert. IFWIN
 oleerrno=: S_OK
+ids=: 0$0
 init=: 0
 )
 
@@ -2015,6 +2022,9 @@ if. init do.
   memf temp
   vRelease base
 end.
+if. 0~:#ids do.
+  smoutput 'WARNING: oleid without olerelease ',":ids
+end.
 codestroy''
 )
 oleinvoke=: 1 : 0
@@ -2022,8 +2032,12 @@ oleinvoke=: 1 : 0
 :
 'disp name'=. 2{. y
 args=. 2}.y
+'x named'=. 2{. x=. boxopen x
 oleerrno=: S_OK
 if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. (m e. DISPATCH_PROPERTYPUT, DISPATCH_PROPERTYPUTREF) > (DISPID_PROPERTYPUT e. named) do.
+  named=. named, DISPID_PROPERTYPUT
+end.
 newdisp=. 0
 if. disp=temp do.
   if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype temp do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
@@ -2032,12 +2046,8 @@ if. disp=temp do.
 end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. 13!:8[3 [ oleerrno=: hr end.
 VariantClear <<temp
-msk=. 32&~:@(3!:0)&> args
-dispparams=. x makedispparms args
-if. m=DISPATCH_PROPERTYPUT do.
-  pdispidNamed memw dispparams, SZI, 1 4
-  (1 0 0 0{a.) memw dispparams, (IF64{12 20), 4 2
-end.
+msk=. -. (x (17 b.) VT_UNKNOWN) +. (x (17 b.) VT_DISPATCH) +. 32&=@(3!:0)&> args
+dispparams=. (x;named) makedispparms args
 if. S_OK~: hr=. vInvoke disp ; id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
 msk freedispparms dispparams
 if. newdisp do. vRelease disp end.
@@ -2065,9 +2075,11 @@ oleid=: 3 : 0
 oleerrno=: S_OK
 if. (VT_UNKNOWN, VT_DISPATCH) -.@e.~ {.oletype y do. 13!:8[3 [ oleerrno=: DISP_E_TYPEMISMATCH end.
 vAddRef d=. {. memr y, 8 1 4
+ids=: ids,d
 d
 )
 olerelease=: 3 : 0
+ids=: ids-.y
 vRelease y
 )
 oleqer=: 3 : 0
