@@ -343,7 +343,7 @@ OOoinvoke=: 1 : 0
 args=. 3}.y
 'x named'=. 2{. x=. boxopen x
 oleerrno=: S_OK
-if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 262144 1 4 8 i. (3!:0&> args) end.
 if. (m e. DISPATCH_PROPERTYPUT, DISPATCH_PROPERTYPUTREF) > (DISPID_PROPERTYPUT e. named) do.
   named=. named, DISPID_PROPERTYPUT
 end.
@@ -391,7 +391,7 @@ OOoPropertyValue=: 4 : 0
 disp=. y
 'name value vts'=. 3{.x, a:
 if. 0=#vts do.
-  vts=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> value=. boxopen value)
+  vts=. (VT_BSTR, VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 262144 1 4 8 i. (3!:0&> value=. boxopen value)
 end.
 if. 0~: obj=. 'com.sun.star.beans.PropertyValue' OOoCreateStruct disp do.
   failure=. 1
@@ -2034,7 +2034,7 @@ oleinvoke=: 1 : 0
 args=. 2}.y
 'x named'=. 2{. x=. boxopen x
 oleerrno=: S_OK
-if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 1 4 8 i. (3!:0&> args) end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, VT_UNKNOWN) {~ 2 131072 262144 1 4 8 i. (3!:0&> args) end.
 if. (m e. DISPATCH_PROPERTYPUT, DISPATCH_PROPERTYPUTREF) > (DISPID_PROPERTYPUT e. named) do.
   named=. named, DISPID_PROPERTYPUT
 end.
@@ -2173,13 +2173,13 @@ end.
 olevector=: [ olesafearray ,@]
 olesafearray=: 4 : 0
 if. 0=#$y do. y=. ,y end.
-if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_UNKNOWN) {~ 2 131072 1 4 8 32 i. 3!:0 y end.
+if. 0=#x do. x=. (VT_BSTR, VT_BSTR, VT_BSTR, VT_I4, VT_I4, VT_R8, _1, VT_UNKNOWN) {~ 2 131072 262144 1 4 8 32 i. 3!:0 y end.
 if. (0~:#,y) *. (VT_UNKNOWN=x) *. 1 4 -.@e.~ 3!:0 y do. 0 return. end.
 if. _1=x do.
-  if. *./ 2 131072 e.~ t=. , 3!:0 &> y do. x=. VT_BSTR
+  if. *./ 2 131072 262144 e.~ t=. , 3!:0 &> y do. x=. VT_BSTR
   elseif. *./ 1 4 e.~ t do. x=. VT_I4 [ y=. ($y) $ ,>y
   elseif. *./ 1 4 8 e.~ t do. x=. VT_R8 [ y=. ($y) $ ,>y
-  elseif. *./ 2 131072 1 4 8 32 e.~ t do. x=. VT_VARIANT
+  elseif. *./ 2 131072 262144 1 4 8 32 e.~ t do. x=. VT_VARIANT
   elseif. do. 0 return.
   end.
 end.
@@ -2238,7 +2238,7 @@ if. 0~: #,y do.
     n1=. {.@$y
     for_i. i.{.@$ y do.
       for_j. i.{:@$ y do.
-        if. 2 131072 e.~ te=. 3!:0 elm=. (<i,j){::y do.
+        if. 2 131072 262144 e.~ te=. 3!:0 elm=. (<i,j){::y do.
           (1 ic VT_BSTR) memw p, (szVARIANT*i+n1*j), 2 2
           (SysAllocStringLen@:(];#)@:uucp elm) memw p, (8+szVARIANT*i+n1*j), 1 4
         elseif. 1 4 e.~ te do.
