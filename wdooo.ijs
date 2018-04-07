@@ -180,16 +180,16 @@ coinsert 'olecomerrorh'
 szVARIANT=: IF64{16 24
 CLSIDFromProgID=: 'ole32 CLSIDFromProgID > i *w *c'&cd
 CLSIDFromString=: 'ole32 CLSIDFromString > i *w *c'&cd
-CoCreateInstance=: 'ole32 CoCreateInstance > i *c i i *c *x'&cd
+CoCreateInstance=: 'ole32 CoCreateInstance   i *c i i *c *x'&cd
 CoInitializeEx=: 'ole32 CoInitializeEx > i x i'&cd
-SafeArrayAccessData=: 'oleaut32 SafeArrayAccessData > s x *x'&cd
+SafeArrayAccessData=: 'oleaut32 SafeArrayAccessData   s x *x'&cd
 SafeArrayCreate=: 'oleaut32 SafeArrayCreate > x s i *i'&cd
 SafeArrayCreateVector=: 'oleaut32 SafeArrayCreateVector > x s i i'&cd
 SafeArrayDestroy=: 'oleaut32 SafeArrayDestroy > s x'&cd
 SafeArrayGetDim=: 'oleaut32 SafeArrayGetDim > i x'&cd
-SafeArrayGetLBound=: 'oleaut32 SafeArrayGetLBound > i x i *i'&cd
-SafeArrayGetUBound=: 'oleaut32 SafeArrayGetUBound > i x i *i'&cd
-SafeArrayGetVartype=: 'oleaut32 SafeArrayGetVartype > i x *s'&cd
+SafeArrayGetLBound=: 'oleaut32 SafeArrayGetLBound   i x i *i'&cd
+SafeArrayGetUBound=: 'oleaut32 SafeArrayGetUBound   i x i *i'&cd
+SafeArrayGetVartype=: 'oleaut32 SafeArrayGetVartype   i x *s'&cd
 SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i *'&cd
 SafeArrayUnaccessData=: 'oleaut32 SafeArrayUnaccessData > s x'&cd
 SysAllocStringLen=: 'oleaut32 SysAllocStringLen > x *w i'&cd
@@ -2057,7 +2057,8 @@ olecreate=: 0&$: : (4 : 0)
 ctx=. (0=x){x,CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
 oleerrno=: S_OK
 if. S_OK= hr=. CLSIDFromProgID`CLSIDFromString@.('{'={.@>@{.) y ; guid=. 16#{.a. do.
-  if. S_OK= hr=. CoCreateInstance guid ; 0 ; ctx ; iid_idispatch ; p=. ,_2 do.
+  if. S_OK= hr=. >@{. cdrc=. CoCreateInstance guid ; 0 ; ctx ; iid_idispatch ; p=. ,_2 do.
+    p=. _1{::cdrc
     base=: {.p
     init=: 1
     temp=: olevaralloc ''
@@ -2105,17 +2106,21 @@ if. array do.
   for_i. >:i.nd do.
     u=. ,2-2
     b=. ,2-2
-    if. S_OK ~: hr=. SafeArrayGetLBound sa ; i ; b do. shape=. 0 break. end.
-    if. S_OK ~: hr=. SafeArrayGetUBound sa ; i ; u do. shape=. 0 break. end.
+    if. S_OK ~: hr=. >@{. cdrc=. SafeArrayGetLBound sa ; i ; b do. shape=. 0 break. end.
+    b=. _1{::cdrc
+    if. S_OK ~: hr=. >@{. cdrc=. SafeArrayGetUBound sa ; i ; u do. shape=. 0 break. end.
+    u=. _1{::cdrc
     shape=. shape, >:u-b
   end.
   if. (0=#shape) +. 0 e. shape do. shape $ 0 return. end.
   vt1=. ,2-2
-  if. S_OK ~: hr=. SafeArrayGetVartype sa ; vt1 do. shape $ 0 return. end.
+  if. S_OK ~: hr=. >@{. cdrc=. SafeArrayGetVartype sa ; vt1 do. shape $ 0 return. end.
+  vt1=. _1{::cdrc
   vt0=. ({.vt1) ((17 b.) (26 b.)) VT_VECTOR (23 b.) VT_ARRAY (23 b.) VT_BYREF
   assert. vt0=vt
   p=. ,2-2
-  if. S_OK= hr=. SafeArrayAccessData sa ; p do.
+  if. S_OK= hr=. >@{. cdrc=. SafeArrayAccessData sa ; p do.
+    p=. _1{::cdrc
     select. vt0
     case. VT_EMPTY do. |: (|.shape) $ <''
     case. VT_UI1;VT_I1 do. |: (|.shape) $ a.i. memr p, 0, (*/shape), 2
@@ -2205,10 +2210,11 @@ if. 0= sa=. SafeArrayCreate x ; (#$y) ; , ($y),.0 do.
 end.
 if. 0~: #,y do.
   p=. ,2-2
-  if. S_OK~: hr=. SafeArrayAccessData sa ; p do.
+  if. S_OK~: hr=. >@{. cdrc=. SafeArrayAccessData sa ; p do.
     SafeArrayDestroy sa
     0 return.
   end.
+  p=. _1{::cdrc
   if. (VT_UI1,VT_I1) e.~ x do.
     (a.{~ <. ,|:y) memw p, 0, (#,y), 2
   elseif. VT_BOOL = x do.

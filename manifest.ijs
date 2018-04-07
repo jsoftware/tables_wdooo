@@ -10,7 +10,7 @@ This program only works on windows.
 Contributed by Bill Lam
 )
 
-VERSION=: '1.0.34'
+VERSION=: '1.0.35'
 
 RELEASE=: 'j802 j803 j804 j805 j806 j807'
 
