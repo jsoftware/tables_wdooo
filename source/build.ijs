@@ -1,6 +1,6 @@
 NB. build.ijs
 
-writesourcex_jp_ '~Addons/tables/wdooo/source/source';'~Addons/tables/wdooo/wdooo.ijs'
+writesourcex_jp_ '~Addons/tables/wdooo/source';'~Addons/tables/wdooo/wdooo.ijs'
 
 (jpath '~addons/tables/wdooo/wdooo.ijs') (fcopynew ::0:) jpath '~Addons/tables/wdooo/wdooo.ijs'
 
