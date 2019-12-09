@@ -13,16 +13,15 @@ NB. file names use URL format eg. file:///C:/test.xls (always forward slash)
 NB. might not coerce 1 to VT_BOOL TRUE so need to specify VT_... as left argument
 NB. use array argument (discuss later)
 test=: 3 : 0
-(1!:1 <jpath '~addons/tables/wdooo/test1.xls',(y-.@-:'')#'x') 1!:2 <f1=. jpath '~temp/test1.xls',(y-.@-:'')#'x'
-f1=. file2url f
-smoutput f1
+(1!:1 <jpath '~addons/tables/wdooo/test1.xls',(y-.@-:'')#'x') 1!:2 <f=. jpath '~temp/test1.xls',(y-.@-:'')#'x'
+smoutput f
 p=. '' conew 'wdooo'
 try.
   'base temp'=. olecreate__p 'com.sun.star.ServiceManager'
   olemethod__p base ; 'createInstance' ; 'com.sun.star.frame.Desktop'
   desktop=. oleid__p temp
   propVals=. VT_UNKNOWN olevector__p ('Hidden' ; 1 ; VT_BOOL) OOoPropertyValue__p base
-  (VT_BSTR, VT_BSTR, VT_I4, VT_ARRAY+VT_UNKNOWN) olemethod__p desktop ; 'loadComponentFromURL' ; f1 ; '_blank' ; 0 ; <<propVals
+  (VT_BSTR, VT_BSTR, VT_I4, VT_ARRAY+VT_UNKNOWN) olemethod__p desktop ; 'loadComponentFromURL' ; (file2url f) ; '_blank' ; 0 ; <<propVals
 NB. no need to run "olevarfree__p propVals"
 NB. propVals is passed with VT_BYREF so that the callee will free propVals
   doc=. oleid__p temp
@@ -46,7 +45,7 @@ NB. clean up
 catch.
   smoutput 'error'
   smoutput oleqer__p ''
-  (olemethod__p ::0:) desktop ; 'terminate'
+  try. (olemethod__p ::0:) desktop ; 'terminate' catch. end.
 end.
 destroy__p ''
 )
