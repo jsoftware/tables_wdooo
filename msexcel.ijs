@@ -103,8 +103,10 @@ NB. save and cleanup
 catch.
   smoutput 'error'
   smoutput oleqer__p ''
-  VT_BOOL (oleput__p ::0:) base ; 'DisplayAlerts' ; 0
-  (olemethod__p ::0:) base ; 'quit'
+  try.
+    VT_BOOL (oleput__p ::0:) base ; 'DisplayAlerts' ; 0
+    (olemethod__p ::0:) base ; 'quit'
+  catch. end.
 end.
 destroy__p ''
 )

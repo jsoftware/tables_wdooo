@@ -77,8 +77,8 @@ coinsert 'olecomerrorh'
 szVARIANT=: IF64{16 24
 
 NB. prototype
-CLSIDFromProgID=: 'ole32 CLSIDFromProgID > i *w *c'&cd
-CLSIDFromString=: 'ole32 CLSIDFromString > i *w *c'&cd
+CLSIDFromProgID=: 'ole32 CLSIDFromProgID i *w *c'&cd
+CLSIDFromString=: 'ole32 CLSIDFromString i *w *c'&cd
 CoCreateInstance=: 'ole32 CoCreateInstance   i *c i i *c *x'&cd
 CoInitializeEx=: 'ole32 CoInitializeEx > i x i'&cd
 SafeArrayAccessData=: 'oleaut32 SafeArrayAccessData   s x *x'&cd
@@ -93,8 +93,8 @@ SafeArrayPutElement=: 'oleaut32 SafeArrayPutElement > i x *i *'&cd
 SafeArrayUnaccessData=: 'oleaut32 SafeArrayUnaccessData > s x'&cd
 SysAllocStringLen=: 'oleaut32 SysAllocStringLen > x *w i'&cd
 SysFreeString=: 'oleaut32 SysFreeString > i x'&cd
-VariantClear=: 'oleaut32 VariantClear > i *x'&cd
-VariantInit=: 'oleaut32 VariantInit > n *'&cd
+VariantClear=: 'oleaut32 VariantClear > i x'&cd
+VariantInit=: 'oleaut32 VariantInit n x'&cd
 
 CoInitializeEx^:IFWIN 0;2
 
@@ -120,13 +120,13 @@ lcid=: 1024
 vAddRef=: ('1 ', (":AddRef), ' > i x')&cd
 vRelease=: ('1 ', (":Release), ' > i x')&cd
 vInvoke=: ('1 ', (":Invoke), ' > i x x *c x s *x *x x x')&cd
-vGetIDsOfNames=: ('1 ', (":GetIDsOfNames), ' > i x *c *x i i *i')&cd
+vGetIDsOfNames=: ('1 ', (":GetIDsOfNames), ' i x *c *x i i *i')&cd
 
 dispid=: 4 : 0
 assert. x~:0
 y=. uucp y
 nm=. ,15!:14 <,'y'
-hr=. vGetIDsOfNames x;GUID_NULL;nm;1;0;r=. ,_1
+'hr r'=. 0 _1 { vGetIDsOfNames x;GUID_NULL;nm;1;0;r=. ,_1
 hr, r
 )
 
@@ -141,7 +141,8 @@ for_i. i.#y do.
     arr=. vargs + szVARIANT * i
     (memr (>s), 0, szVARIANT, 2) memw arr, 0, szVARIANT, 2
   else.
-    VariantInit <<arr=. vargs + szVARIANT * i
+    cdrc=. VariantInit <arr=. vargs + szVARIANT * i
+    arr=. {.>@{:cdrc
     (1 ic vt) memw arr, 0 2 2
     byref=. vt (17 b.) VT_BYREF
     if. byref do. s memw arr, 8 1 4 continue. end.
@@ -214,7 +215,7 @@ end.
 if. a do.
   assert. c = #msk
   if. 1 e. msk do.
-    VariantClear@<@<"0 a+msk# szVARIANT* i.-c     NB. arguments passed in reversed order
+    VariantClear@<"0 a+msk# szVARIANT* i.-c     NB. arguments passed in reversed order
   end.
   memf a
 end.
@@ -226,13 +227,13 @@ NB. alloc VARIANT
 olevaralloc=: 3 : 0
 f=. mema szVARIANT
 (szVARIANT#{.a.) memw f, 0, szVARIANT, 2
-VariantInit <<f
-f
+cdrc=. VariantInit <f
+f=. {.>@{:cdrc
 )
 
 NB. free VARIANT
 olevarfree=: 3 : 0
 if. y do.
-  memf y [ VariantClear <<y
+  memf y [ VariantClear <y
 end.
 )

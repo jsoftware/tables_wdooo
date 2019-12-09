@@ -18,7 +18,7 @@ init=: 0
 
 destroy=: 3 : 0
 if. init do.
-  VariantClear <<temp
+  VariantClear <temp
   memf temp
   vRelease base
 end.
@@ -53,7 +53,7 @@ if. disp=temp do.  NB. pass prev temp for further invoke
   vAddRef disp=. {. memr temp, 8 1 4
 end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. 13!:8[3 [ oleerrno=: hr end.
-VariantClear <<temp
+VariantClear <temp
 msk=. -. (x (17 b.) VT_UNKNOWN) +. (x (17 b.) VT_DISPATCH) +. 32&=@(3!:0)&> args
 dispparams=. (x;named) makedispparms args
 if. S_OK~: hr=. vInvoke disp ; id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0 do. 13!:8[3 [ oleerrno=: hr end.
@@ -70,7 +70,8 @@ olecreate=: 0&$: : (4 : 0)
 ctx=. (0=x){x,CLSCTX_INPROC_SERVER+CLSCTX_LOCAL_SERVER
 NB. create object and get idispatch, temp
 oleerrno=: S_OK
-if. S_OK= hr=. CLSIDFromProgID`CLSIDFromString@.('{'={.@>@{.) y ; guid=. 16#{.a. do.
+if. S_OK= hr=. >@{. cdrc=. CLSIDFromProgID`CLSIDFromString@.('{'={.@>@{.) (y,{.a.) ; guid=. 16#{.a. do.
+  guid=. >@{:cdrc
   if. S_OK= hr=. >@{. cdrc=. CoCreateInstance guid ; 0 ; ctx ; iid_idispatch ; p=. ,_2 do.
     p=. _1{::cdrc
     base=: {.p

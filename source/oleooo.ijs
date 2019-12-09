@@ -35,7 +35,7 @@ if. (m e. DISPATCH_PROPERTYPUT, DISPATCH_PROPERTYPUTREF) > (DISPID_PROPERTYPUT e
   named=. named, DISPID_PROPERTYPUT
 end.
 if. S_OK~: 0{:: 'hr id'=. disp dispid name do. hr return. end.
-if. temp do. VariantClear <<temp end.
+if. temp do. VariantClear <temp end.
 msk=. -. (x (17 b.) VT_UNKNOWN) +. (x (17 b.) VT_DISPATCH) +. 32&=@(3!:0)&> args
 dispparams=. (x;named) makedispparms args
 hr=. vInvoke disp ; id ; GUID_NULL ; 0 ; m ; (<dispparams) ; (<temp) ; 0 ; 0
