@@ -10,7 +10,7 @@ This program only works on windows.
 Contributed by Bill Lam
 )
 
-VERSION=: '1.0.37'
+VERSION=: '1.0.38'
 
 RELEASE=: ''
 

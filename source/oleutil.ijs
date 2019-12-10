@@ -124,7 +124,7 @@ vGetIDsOfNames=: ('1 ', (":GetIDsOfNames), ' i x *c *x i i *i')&cd
 
 dispid=: 4 : 0
 assert. x~:0
-y=. uucp y
+y=. uucp y,{.a.
 nm=. ,15!:14 <,'y'
 'hr r'=. 0 _1 { vGetIDsOfNames x;GUID_NULL;nm;1;0;r=. ,_1
 hr, r
